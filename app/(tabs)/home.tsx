@@ -4,17 +4,24 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import EmptyState from "../../components/EmptyState";
 import SearchInput from "../../components/SearchInput";
 import Trending from "../../components/Trending";
+import VideoCard from "../../components/VideoCard";
 import { images } from "../../constants";
+const mockImage = "https://picsum.photos/200";
 const Home = () => {
   // TODO: fetch all posts
   // fetch latest posts
   return (
     <SafeAreaView className="bg-primary h-full">
       <FlatList
-        data={[]}
+        data={[{ id: "1" }, { id: "2" }]}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <Text className="text-3xl text-white">{item.id}</Text>
+          <VideoCard
+            title="Test video"
+            thumbnail={mockImage}
+            video={mockImage}
+            avatar={mockImage}
+          />
         )}
         ListHeaderComponent={() => (
           <View className="my-6 px-4 space-y-6">
