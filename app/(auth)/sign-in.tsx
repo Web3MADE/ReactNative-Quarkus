@@ -5,7 +5,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../../components/CustomButton";
 import FormField from "../../components/FormField";
 import { images } from "../../constants";
-import storage from "../config/Storage";
 const SignIn = () => {
   const router = useRouter();
 
@@ -16,33 +15,36 @@ const SignIn = () => {
   });
 
   const submit = async () => {
-    setisLoading(true);
-    console.log("form ", form);
-    const response = await fetch(`http://localhost:8080/api/users/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(form),
-    })
-      .then((response) => response.json()) // Convert response to JSON
-      .then((data) => {
-        console.log("Success:", data);
-        const token = data.token; // Access the token from the response
-        const userId = data.userId;
-        // Store the token using AsyncStorage or similar for later use
-        storage.save({ key: "token", data: token, expires: 1000 * 3600 * 24 });
-        storage.save({
-          key: "userId",
-          data: userId,
-          expires: 1000 * 3600 * 24,
-        });
-        setisLoading(false);
-        router.push("/home");
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+    // TODO: re-implement auth later...
+    router.push("/home");
+
+    // setisLoading(true);
+    // console.log("form ", form);
+    // const response = await fetch(`http://localhost:8080/api/users/login`, {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(form),
+    // })
+    //   .then((response) => response.json()) // Convert response to JSON
+    //   .then((data) => {
+    //     console.log("Success:", data);
+    //     const token = data.token; // Access the token from the response
+    //     const userId = data.userId;
+    //     // Store the token using AsyncStorage or similar for later use
+    //     storage.save({ key: "token", data: token, expires: 1000 * 3600 * 24 });
+    //     storage.save({
+    //       key: "userId",
+    //       data: userId,
+    //       expires: 1000 * 3600 * 24,
+    //     });
+    //     setisLoading(false);
+    //     router.push("/home");
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error:", error);
+    //   });
   };
 
   return (

@@ -7,13 +7,40 @@ import Trending from "../../components/Trending";
 import VideoCard from "../../components/VideoCard";
 import { images } from "../../constants";
 const mockImage = "https://picsum.photos/200";
+const mockImage2 = "https://picsum.photos/id/237/200/300";
+const mockImage3 = "https://picsum.photos/id/238/200/300";
+const mockVideo = "https://www.tiktok.com/@web3made/video/7363899884509908256";
+const mockPosts = [
+  {
+    id: "1",
+    title: "The Matrix",
+    thumbnail: mockImage,
+    video: mockVideo,
+    avatar: mockImage,
+  },
+  {
+    id: "2",
+    title: "The Matrix Reloaded",
+    thumbnail: mockImage2,
+    video: mockVideo,
+    avatar: mockImage2,
+  },
+  {
+    id: "3",
+    title: "The Matrix TriLoaded",
+    thumbnail: mockImage3,
+    video: mockVideo,
+    avatar: mockImage3,
+  },
+];
 const Home = () => {
   // TODO: fetch all posts
   // fetch latest posts
+
   return (
     <SafeAreaView className="bg-primary h-full">
       <FlatList
-        data={[{ id: "1" }, { id: "2" }]}
+        data={mockPosts}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <VideoCard
@@ -45,7 +72,7 @@ const Home = () => {
               <Text className="text-gray-100 text-lg font-pregular mb-3">
                 Latest Videos
               </Text>
-              <Trending posts={[{ id: "1" }, { id: "2" }]} />
+              <Trending posts={mockPosts} />
             </View>
           </View>
         )}
