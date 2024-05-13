@@ -19,6 +19,7 @@ const VideoCard = ({
   video,
 }: IVideoCardProps) => {
   const [play, setPlay] = useState(false);
+  console.log("uri thumb ", thumbnail);
 
   return (
     <View className="flex flex-col items-center px-4 mb-14">
