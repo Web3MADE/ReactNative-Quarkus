@@ -45,9 +45,9 @@ const Home = () => {
         renderItem={({ item }) => (
           <VideoCard
             title="Test video"
-            thumbnail={mockImage}
-            video={mockImage}
-            avatar={mockImage}
+            thumbnail={item.thumbnail}
+            video={item.video}
+            avatar={item.avatar}
           />
         )}
         ListHeaderComponent={() => (

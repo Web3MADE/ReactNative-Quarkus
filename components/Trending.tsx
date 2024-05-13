@@ -8,7 +8,7 @@ import {
   ViewToken,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
-import localVideo from "../assets/videos/mockShort.mp4";
+import localVideo from "../assets/videos/testMp4.mp4";
 import { icons } from "../constants";
 
 interface ITrendingItemProps {
@@ -57,12 +57,12 @@ const TrendingItem = ({ activeItem, item }: ITrendingItemProps) => {
           shouldPlay
           useNativeControls
           onPlaybackStatusUpdate={(status) => {}}
+          isMuted={false}
         />
       ) : (
         <TouchableOpacity
           className="relative justify-center items-center"
           activeOpacity={0.7}
-          // disable play for now until video is implemented
           onPress={() => setPlay(true)}
         >
           {/* ImageBackground  */}

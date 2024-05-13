@@ -1,7 +1,8 @@
+import { ResizeMode, Video } from "expo-av";
 import React, { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
+import localVideo from "../assets/videos/testMp4.mp4";
 import { icons } from "../constants";
-
 interface IVideoCardProps {
   title: string;
   creator?: string;
@@ -50,10 +51,17 @@ const VideoCard = ({
       </View>
 
       {play ? (
-        <Text>Playing...</Text>
+        <Video
+          // TODO: replace with item.video once API is finalized
+          source={localVideo}
+          className="w-full h-60 rounded-xl mt-3"
+          resizeMode={ResizeMode.CONTAIN}
+          useNativeControls
+          shouldPlay
+        />
       ) : (
         <TouchableOpacity
-          className="w-full h-60"
+          className="w-full h-60 rounded-xl mt-3 relative flex justify-center items-center"
           activeOpacity={0.7}
           onPress={() => setPlay(true)}
         >
@@ -64,7 +72,7 @@ const VideoCard = ({
           />
           <Image
             source={icons.play}
-            className="w-12 h-12"
+            className="w-12 h-12 absolute"
             resizeMode="contain"
           />
         </TouchableOpacity>
