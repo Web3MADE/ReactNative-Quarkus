@@ -8,7 +8,7 @@ import {
   ViewToken,
 } from "react-native";
 import * as Animatable from "react-native-animatable";
-import localVideo from "../assets/videos/mockMp4.mp4";
+import localVideo from "../assets/videos/mockShort.mp4";
 import { icons } from "../constants";
 
 interface ITrendingItemProps {
