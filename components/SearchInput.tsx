@@ -3,22 +3,11 @@ import React, { useState } from "react";
 import { Alert, Image, TextInput, TouchableOpacity, View } from "react-native";
 import { icons } from "../constants";
 interface ISearchInputProps {
-  value?: string;
-  placeholder?: string;
-  handleChangeText: (text: string) => void;
-  otherStyles?: string;
-  keyboardType?: "default" | "email-address" | "numeric" | "phone-pad";
+  initialQuery: string;
 }
-const SearchInput = ({
-  value,
-  placeholder,
-  handleChangeText,
-  otherStyles,
-  keyboardType,
-  ...props
-}: ISearchInputProps) => {
+const SearchInput = ({ initialQuery }: ISearchInputProps) => {
   const pathname = usePathname();
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(initialQuery);
 
   return (
     <View className="w-full h-16 px-4 bg-black-100 rounded-2xl border-2 border-black-200 focus:border-secondary flex flex-row items-center space-x-4">
@@ -28,7 +17,6 @@ const SearchInput = ({
         placeholder="Search for a topic"
         placeholderTextColor="#CDCDE0"
         onChangeText={(e) => setQuery(e)}
-        {...props}
         style={{ alignSelf: "center" }}
       />
       <TouchableOpacity

@@ -10,7 +10,7 @@ const mockImage = "https://picsum.photos/200";
 const mockImage2 = "https://picsum.photos/id/237/200/300";
 const mockImage3 = "https://picsum.photos/id/238/200/300";
 const mockVideo = "https://www.tiktok.com/@web3made/video/7363899884509908256";
-const mockPosts = [
+export const mockPosts = [
   {
     id: "1",
     title: "The Matrix",
