@@ -1,13 +1,13 @@
 import { router, usePathname } from "expo-router";
 import React, { useState } from "react";
-import { Alert, Image, TextInput, TouchableOpacity, View } from "react-native";
+import { Image, TextInput, TouchableOpacity, View } from "react-native";
 import { icons } from "../constants";
 interface ISearchInputProps {
   initialQuery: string;
 }
 const SearchInput = ({ initialQuery }: ISearchInputProps) => {
   const pathname = usePathname();
-  const [query, setQuery] = useState(initialQuery);
+  const [query, setQuery] = useState(initialQuery || "");
 
   return (
     <View className="w-full h-16 px-4 bg-black-100 rounded-2xl border-2 border-black-200 focus:border-secondary flex flex-row items-center space-x-4">
@@ -23,7 +23,7 @@ const SearchInput = ({ initialQuery }: ISearchInputProps) => {
         onPress={() => {
           console.log("query", query);
           if (!query) {
-            return Alert.alert("Please enter a search query");
+            router.back();
           }
 
           if (pathname.startsWith("/search")) {
