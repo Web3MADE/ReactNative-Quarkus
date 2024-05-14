@@ -44,7 +44,7 @@ const Home = () => {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <VideoCard
-            title="Test video"
+            title={item.title}
             thumbnail={item.thumbnail}
             video={item.video}
             avatar={item.avatar}
@@ -66,7 +66,7 @@ const Home = () => {
                 />
               </View>
             </View>
-            <SearchInput handleChangeText={() => {}} />
+            <SearchInput />
 
             <View className="w-full flex-1 pt-5 pb-8">
               <Text className="text-gray-100 text-lg font-pregular mb-3">

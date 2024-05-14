@@ -9,6 +9,7 @@ import SearchInput from "../../components/SearchInput";
 import VideoCard from "../../components/VideoCard";
 
 const Search = () => {
+  // TODO: implement search API functionality
   const { query } = useLocalSearchParams();
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -17,7 +18,7 @@ const Search = () => {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <VideoCard
-            title="Test video"
+            title={item.title}
             thumbnail={item.thumbnail}
             video={item.video}
             avatar={item.avatar}

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Image, TextInput, TouchableOpacity, View } from "react-native";
 import { icons } from "../constants";
 interface ISearchInputProps {
-  initialQuery: string;
+  initialQuery?: string;
 }
 const SearchInput = ({ initialQuery }: ISearchInputProps) => {
   const pathname = usePathname();
