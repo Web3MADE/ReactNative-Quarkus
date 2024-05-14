@@ -5,6 +5,7 @@ import { FlatList, Image, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { mockPosts } from "../(tabs)/home";
 import EmptyState from "../../components/EmptyState";
+import InfoBox from "../../components/InfoBox";
 import VideoCard from "../../components/VideoCard";
 import { icons } from "../../constants";
 
@@ -47,6 +48,27 @@ const Profile = () => {
                 source={{ uri: mockAvatar }}
                 className="w-[90%] h-[90%] rounded-lg"
                 resizeMode="cover"
+              />
+            </View>
+
+            <InfoBox
+              title={"John Doe"}
+              containerStyles="mt-5"
+              titleStyles="text-lg"
+            />
+
+            <View className="mt-5 flex-row">
+              <InfoBox
+                title={"John Doe"}
+                containerStyles="mr-4"
+                titleStyles="text-lg"
+                subtitle="Posts"
+              />
+              <InfoBox
+                title={"John Doe"}
+                containerStyles="mr-4"
+                titleStyles="text-lg"
+                subtitle="Followers"
               />
             </View>
           </View>
