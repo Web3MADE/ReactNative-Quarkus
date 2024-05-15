@@ -37,7 +37,6 @@ const Create = () => {
         selectType === "video"
           ? ImagePicker.MediaTypeOptions.Videos
           : ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
