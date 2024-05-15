@@ -1,15 +1,30 @@
 import { ResizeMode, Video } from "expo-av";
 import * as DocumentPicker from "expo-document-picker";
+import { router } from "expo-router";
 import React, { useState } from "react";
-import { Image, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import {
+  Alert,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../../components/CustomButton";
 import FormField from "../../components/FormField";
 import { icons } from "../../constants";
 
+interface ICreateForm {
+  title: string;
+  video: DocumentPicker.DocumentPickerAsset | null;
+  thumbnail: DocumentPicker.DocumentPickerAsset | null;
+  prompt: string;
+}
+
 const Create = () => {
   const [uploading, setUploading] = useState(false);
-  const [form, setform] = useState({
+  const [form, setform] = useState<ICreateForm>({
     title: "",
     video: null,
     thumbnail: null,
@@ -17,12 +32,46 @@ const Create = () => {
   });
 
   const openPicker = async (selectType: "video" | "image") => {
-    // TODO: API call to
     const result = await DocumentPicker.getDocumentAsync({
       type: selectType === "video" ? "video/*" : "image/*",
     });
+
+    if (!result.canceled) {
+      if (selectType === "video") setform({ ...form, video: result.assets[0] });
+      else setform({ ...form, thumbnail: result.assets[0] });
+    } else {
+      setTimeout(() => {
+        Alert.alert("Document picked", JSON.stringify(result, null, 2));
+      }, 100);
+    }
   };
-  const submit = () => {};
+  const submit = () => {
+    if (!isFormValid(form)) {
+      return Alert.alert("Error", "Please fill all fields");
+    }
+
+    setUploading(true);
+    try {
+      // TODO: API call to upload createForm data
+
+      Alert.alert("Success", "Post uploaded successfully");
+      router.push("/home");
+    } catch (error) {
+      if (error instanceof Error) {
+        Alert.alert("Error message obj", error.message ?? "An error occurred");
+      } else if (typeof error === "string") {
+        Alert.alert("Error String", error);
+      }
+    } finally {
+      setform({
+        title: "",
+        video: null,
+        thumbnail: null,
+        prompt: "",
+      });
+      setUploading(false);
+    }
+  };
 
   return (
     // SafeAreaView is only applicable to iOS devices and renders
@@ -46,7 +95,7 @@ const Create = () => {
           <TouchableOpacity onPress={() => openPicker("video")}>
             {form.video ? (
               <Video
-                source={{ uri: form.video }}
+                source={{ uri: form.video.uri }}
                 className="w-full h-64"
                 useNativeControls
                 resizeMode={ResizeMode.COVER}
@@ -73,7 +122,7 @@ const Create = () => {
           <TouchableOpacity onPress={() => openPicker("image")}>
             {form.thumbnail ? (
               <Video
-                source={{ uri: form.thumbnail }}
+                source={{ uri: form.thumbnail.uri }}
                 className="w-full h-64 rounded-2xl"
                 useNativeControls
                 resizeMode={ResizeMode.COVER}
@@ -112,5 +161,9 @@ const Create = () => {
     </SafeAreaView>
   );
 };
+
+function isFormValid(form: ICreateForm) {
+  return Object.values(form).every((value) => value !== null || value !== "");
+}
 
 export default Create;
