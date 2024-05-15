@@ -4,8 +4,9 @@ import { Image, TextInput, TouchableOpacity, View } from "react-native";
 import { icons } from "../constants";
 interface ISearchInputProps {
   initialQuery?: string;
+  placeholder?: string;
 }
-const SearchInput = ({ initialQuery }: ISearchInputProps) => {
+const SearchInput = ({ initialQuery, placeholder }: ISearchInputProps) => {
   const pathname = usePathname();
   const [query, setQuery] = useState(initialQuery || "");
 
@@ -14,7 +15,7 @@ const SearchInput = ({ initialQuery }: ISearchInputProps) => {
       <TextInput
         className="flex-1 text-white font-pregular text-base"
         value={query}
-        placeholder="Search for a topic"
+        placeholder={placeholder}
         placeholderTextColor="#CDCDE0"
         onChangeText={(e) => setQuery(e)}
         style={{ alignSelf: "center" }}

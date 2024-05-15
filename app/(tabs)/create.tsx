@@ -79,7 +79,7 @@ const Create = () => {
     // a view that respects the device's top status bar and front camera notch
     <SafeAreaView className="bg-primary h-full">
       <ScrollView className="px-4 my-6">
-        <Text className="text-2xl text-white font-psemibold">Upload video</Text>
+        <Text className="text-2xl text-white font-bold">Upload video</Text>
 
         <FormField
           title="Video Title"
