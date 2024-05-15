@@ -39,10 +39,6 @@ const Create = () => {
     if (!result.canceled) {
       if (selectType === "video") setform({ ...form, video: result.assets[0] });
       else setform({ ...form, thumbnail: result.assets[0] });
-    } else {
-      setTimeout(() => {
-        Alert.alert("Document picked", JSON.stringify(result, null, 2));
-      }, 100);
     }
   };
   const submit = () => {
