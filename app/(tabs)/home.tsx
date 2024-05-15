@@ -17,6 +17,7 @@ export const mockPosts = [
     thumbnail: mockImage,
     video: mockVideo,
     avatar: mockImage,
+    creator: "Neo",
   },
   {
     id: "2",
@@ -24,6 +25,7 @@ export const mockPosts = [
     thumbnail: mockImage2,
     video: mockVideo,
     avatar: mockImage2,
+    creator: "Trinity",
   },
   {
     id: "3",
@@ -31,6 +33,7 @@ export const mockPosts = [
     thumbnail: mockImage3,
     video: mockVideo,
     avatar: mockImage3,
+    creator: "Morpheus",
   },
 ];
 const Home = () => {
@@ -48,6 +51,7 @@ const Home = () => {
             thumbnail={item.thumbnail}
             video={item.video}
             avatar={item.avatar}
+            creator={item.creator}
           />
         )}
         ListHeaderComponent={() => (
@@ -66,7 +70,7 @@ const Home = () => {
                 />
               </View>
             </View>
-            <SearchInput />
+            <SearchInput placeholder="Search for a topic" />
 
             <View className="w-full flex-1 pt-5 pb-8">
               <Text className="text-gray-100 text-lg font-pregular mb-3">

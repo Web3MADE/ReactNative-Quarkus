@@ -46,7 +46,8 @@ const VideoCard = ({
           </View>
         </View>
 
-        <View className="pt-2">
+        <View className="flex flex-row pt-2">
+          <Image source={icons.plus} className="w-5 h-5" resizeMode="contain" />
           <Image source={icons.menu} className="w-5 h-5" resizeMode="contain" />
         </View>
       </View>
@@ -68,7 +69,7 @@ const VideoCard = ({
         >
           <Image
             source={{ uri: thumbnail }}
-            className="w-ful h-full rounded-xl mt-3"
+            className="w-full h-full rounded-xl mt-3"
             resizeMode="cover"
           />
           <Image
