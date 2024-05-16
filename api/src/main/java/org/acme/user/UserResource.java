@@ -1,4 +1,4 @@
-package org.acme;
+package org.acme.user;
 import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
 import java.util.List;
 import org.acme.security.GenerateToken;
