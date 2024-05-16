@@ -1,7 +1,11 @@
 package org.acme.video;
 
+import java.util.Set;
+import org.acme.user.User;
 import io.quarkus.hibernate.reactive.panache.PanacheEntity;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -12,8 +16,12 @@ public class Video extends PanacheEntity {
     public String thumbnailUrl;
     public String description;
     public String category;
-    public String uploader;
     public int likes;
+    
+    @ManyToOne
+    public String uploader;
+    @ManyToMany(mappedBy = "likedVideos")
+    public Set<User> likedByUsers;
 
     public String getTitle() {
         return title;
@@ -43,6 +51,6 @@ public class Video extends PanacheEntity {
         return likes;
     }
 
-    
+
 
 }
