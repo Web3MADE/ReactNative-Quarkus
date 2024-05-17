@@ -14,12 +14,10 @@ public class Video extends PanacheEntity {
     public String title;
     public String url;
     public String thumbnailUrl;
-    public String description;
-    public String category;
     public int likes;
-    
+
     @ManyToOne
-    public String uploader;
+    public User uploader;
     @ManyToMany(mappedBy = "likedVideos")
     public Set<User> likedByUsers;
 
@@ -35,15 +33,7 @@ public class Video extends PanacheEntity {
         return thumbnailUrl;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public String getUploader() {
+    public User getUploader() {
         return uploader;
     }
 
