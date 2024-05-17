@@ -41,6 +41,4 @@ public class Video extends PanacheEntity {
         return likes;
     }
 
-
-
 }
