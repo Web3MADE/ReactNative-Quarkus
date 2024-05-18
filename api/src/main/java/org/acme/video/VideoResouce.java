@@ -2,6 +2,7 @@ package org.acme.video;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.acme.user.User;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 import io.quarkus.hibernate.reactive.panache.Panache;
@@ -42,8 +43,9 @@ public class VideoResouce {
 
     @GET
     @PermitAll
-    public Uni<List<Video>> getAll() {
-        return Video.listAll();
+    public Uni<List<VideoDTO>> getAllVideos() {
+        return Video.listAll().map(videos -> videos.stream()
+                .map(video -> new VideoDTO((Video) video)).collect(Collectors.toList()));
     }
 
     @POST
