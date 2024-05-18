@@ -15,6 +15,7 @@ import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -47,6 +48,16 @@ public class VideoResouce {
         return Video.listAll().map(videos -> videos.stream()
                 .map(video -> new VideoDTO((Video) video)).collect(Collectors.toList()));
     }
+
+    @GET
+    @Path("{id}")
+    @PermitAll
+    public Uni<Response> getVideoById(@PathParam("id") Long id) {
+        return Video.findById(id).onItem().ifNotNull()
+                .transform(video -> Response.ok(new VideoDTO((Video) video)).build()).onItem()
+                .ifNull().continueWith(Response.status(Response.Status.NOT_FOUND).build());
+    }
+
 
     @POST
     @PermitAll
