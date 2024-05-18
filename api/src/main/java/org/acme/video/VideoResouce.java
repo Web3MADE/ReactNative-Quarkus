@@ -79,12 +79,12 @@ public class VideoResouce {
                 .transformToUni(uploader -> {
                     Video video = new Video();
                     video.title = input.title;
-                    video.url = "/uploads/" + "15523022-9827-4ef3-8fee-eef8d89cfdfa.jpg";
-                    video.thumbnailUrl = "/uploads/" + "a5a1153a-ec0e-4d0f-bf96-72cb360ad9b7.mp4";
+                    video.url = "/uploads/" + videoFileName;
+                    video.thumbnailUrl = "/uploads/" + thumbnailFileName;
                     video.uploader = (User) uploader;
 
-                    return video.persist().replaceWith(
-                            Response.ok(video).status(Response.Status.CREATED).build());
+                    return video.persist().replaceWith(Response.ok(new VideoDTO(video))
+                            .status(Response.Status.CREATED).build());
                 });
     }
 
