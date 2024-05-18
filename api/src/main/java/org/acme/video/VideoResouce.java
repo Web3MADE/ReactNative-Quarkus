@@ -50,6 +50,14 @@ public class VideoResouce {
     }
 
     @GET
+    @PermitAll
+    @Path("/uploader/{id}")
+    public Uni<List<VideoDTO>> getVideosByUploader(@PathParam("id") Long id) {
+        return Video.find("uploader.id", id).list().map(videos -> videos.stream()
+                .map(video -> new VideoDTO((Video) video)).collect(Collectors.toList()));
+    }
+
+    @GET
     @Path("{id}")
     @PermitAll
     public Uni<Response> getVideoById(@PathParam("id") Long id) {
@@ -57,7 +65,6 @@ public class VideoResouce {
                 .transform(video -> Response.ok(new VideoDTO((Video) video)).build()).onItem()
                 .ifNull().continueWith(Response.status(Response.Status.NOT_FOUND).build());
     }
-
 
     @POST
     @PermitAll
