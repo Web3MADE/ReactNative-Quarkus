@@ -16,9 +16,9 @@ import jakarta.persistence.Table;
 // Note: the quarkus-panache-mock dep allows mocking the static methods of the User class for
 // testing
 public class User extends PanacheEntity {
-    private String name;
-    private String email;
-    private String password;
+    public String name;
+    public String email;
+    public String password;
 
     @OneToMany(mappedBy = "uploader", fetch = FetchType.EAGER)
     public Set<Video> uploadedVideos;
