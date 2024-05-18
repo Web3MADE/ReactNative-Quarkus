@@ -61,6 +61,13 @@ Easily start your REST Web Services
 
 [Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
 
-## Setup Postgres
+## Access Dev mode's Postgres (preferred)
+
+`psql -h localhost -p 61307 -U quarkus -d quarkus`
+
+Note: the port may change dynamically, confirm the details at `http://localhost:8080/q/dev-ui/configuration-form-editor?filter=quarkus.datasource.`
+Note: The username is quarkus, even though it's empty in the dev-ui config.
+
+## Setup Postgres (optional)
 
 docker run -it --rm=true --name quarkus_test -e POSTGRES_USER=quarkus_test -e POSTGRES_PASSWORD=quarkus_test -e POSTGRES_DB=quarkus_test -p 5432:5432 postgres:13.3
