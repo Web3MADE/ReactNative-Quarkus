@@ -1,6 +1,5 @@
 import { ResizeMode, Video } from "expo-av";
 import * as ImagePicker from "expo-image-picker";
-import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   Alert,
@@ -46,17 +45,29 @@ const Create = () => {
       else setform({ ...form, thumbnail: result.assets[0] });
     }
   };
-  const submit = () => {
+  const submit = async () => {
     if (!isFormValid(form)) {
       return Alert.alert("Error", "Please fill all fields");
     }
 
     setUploading(true);
     try {
-      // TODO: API call to upload createForm data
+      const formData = new FormData();
+      formData.append("title", form.title);
+      formData.append("uploaderId", "1"); // TODO: get user id from auth context
+      formData.append("video", form.video?.uri ?? "");
+      formData.append("thumbnail", form.thumbnail?.uri ?? "");
 
+      const res = await fetch("http://localhost:8080/api/videos", {
+        method: "POST",
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+        body: formData,
+      });
+      console.log("data uploaded ", res);
       Alert.alert("Success", "Post uploaded successfully");
-      router.push("/home");
+      // router.push("/home");
     } catch (error) {
       if (error instanceof Error) {
         Alert.alert("Error message obj", error.message ?? "An error occurred");
