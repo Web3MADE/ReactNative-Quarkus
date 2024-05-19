@@ -32,7 +32,7 @@ INSERT INTO users (id, name, email) VALUES (2, 'Bob', 'bob@example.com');
 -- INSERT INTO videos (title, url, thumbnailUrl, likes, uploader_id) VALUES ('Video 1', '/uploads/mockMp4.mp4', '/uploads/twooptions.jpeg', 10, 1);
 -- INSERT INTO videos (title, url, thumbnailUrl, likes, uploader_id) VALUES ('Video 2', '/uploads/mockMp4.mp4', '/uploads/twooptions.jpeg', 20, 2);
 
--- Insert mock data for liked videos
-INSERT INTO user_liked_videos (user_id, video_id) VALUES (1, 1);
-INSERT INTO user_liked_videos (user_id, video_id) VALUES (1, 2);
-INSERT INTO user_liked_videos (user_id, video_id) VALUES (2, 2);
+-- -- Insert mock data for liked videos
+-- INSERT INTO user_liked_videos (user_id, video_id) VALUES (1, 1);
+-- INSERT INTO user_liked_videos (user_id, video_id) VALUES (1, 2);
+-- INSERT INTO user_liked_videos (user_id, video_id) VALUES (2, 2);
