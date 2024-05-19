@@ -23,7 +23,6 @@ import jakarta.ws.rs.core.Response;
 @Path("/api/videos")
 @ApplicationScoped
 @Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.MULTIPART_FORM_DATA)
 public class VideoResouce {
     // define custom class for FileUploadInput
     public static class FileUploadInput {
@@ -69,6 +68,7 @@ public class VideoResouce {
     @POST
     @PermitAll
     @WithTransaction
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Uni<Response> upload(FileUploadInput input) {
 
         System.out.println("title: " + input.title);
@@ -76,7 +76,6 @@ public class VideoResouce {
         System.out.println("fileUploadInput: " + input.video);
         System.out.println("thumbnailUpload: " + input.thumbnail);
 
-        // TODO: WHY is this always null?
         if (input.video == null) {
             // create a Uni (async operation) to emit a BAD REQUEST response
             return Uni.createFrom().item(Response.status(Response.Status.BAD_REQUEST)
@@ -104,6 +103,39 @@ public class VideoResouce {
                     return video.persist().replaceWith(Response.ok(new VideoDTO(video))
                             .status(Response.Status.CREATED).build());
                 });
+    }
+
+    @POST
+    @Path("{videoId}/like")
+    @PermitAll
+    // @RolesAllowed({"User", "Admin"})
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Uni<Response> likeVideo(@PathParam("videoId") Long videoId, LikeRequest request) {
+        Long userId = request.userId;
+
+        return Panache
+                .withTransaction(() -> User.findById(userId).onItem().transformToUni(userObj -> {
+                    if (userObj == null) {
+                        return Uni.createFrom().item(Response.status(Response.Status.NOT_FOUND)
+                                .entity("User not found").build());
+                    }
+                    return Video.findById(videoId).onItem().transformToUni(videoObj -> {
+                        User user = (User) userObj;
+                        Video video = (Video) videoObj;
+
+                        if (video == null) {
+                            // LOGGER.errorf("Video with ID %d not found", videoId);
+                            return Uni.createFrom().item(Response.status(Response.Status.NOT_FOUND)
+                                    .entity("Video not found").build());
+                        }
+                        if (video.likedByUsers.add(user)) {
+                            video.likes += 1;
+                            user.likedVideos.add(video);
+                        }
+                        return video.persistAndFlush()
+                                .replaceWith(Response.ok(new VideoDTO((Video) video)).build());
+                    });
+                }));
     }
 
 

@@ -4,6 +4,7 @@ import java.util.Set;
 import org.acme.user.User;
 import io.quarkus.hibernate.reactive.panache.PanacheEntity;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -16,9 +17,9 @@ public class Video extends PanacheEntity {
     public String thumbnailUrl;
     public int likes;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     public User uploader;
-    @ManyToMany(mappedBy = "likedVideos")
+    @ManyToMany(mappedBy = "likedVideos", fetch = FetchType.EAGER)
     public Set<User> likedByUsers;
 
     public String getTitle() {
