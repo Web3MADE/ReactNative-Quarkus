@@ -3,15 +3,17 @@ package org.acme.video;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.acme.azure.BlobService;
 import org.acme.user.User;
+import org.jboss.resteasy.reactive.RestForm;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 import io.quarkus.hibernate.reactive.panache.Panache;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
 import jakarta.annotation.security.PermitAll;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -24,23 +26,27 @@ import jakarta.ws.rs.core.Response;
 @ApplicationScoped
 @Produces(MediaType.APPLICATION_JSON)
 public class VideoResouce {
+
     // define custom class for FileUploadInput
     public static class FileUploadInput {
         // values are URL decoded by default
         // form field name is specified in the @FormParam annotation
         // MAY need to change to RestForm if can't upload to Azure
-        @FormParam("video")
+        @RestForm("video")
         public FileUpload video;
 
-        @FormParam("thumbnail")
+        @RestForm("thumbnail")
         public FileUpload thumbnail;
 
-        @FormParam("title")
+        @RestForm("title")
         public String title;
 
-        @FormParam("uploaderId")
+        @RestForm("uploaderId")
         public Long uploaderId;
     }
+
+    @Inject
+    BlobService blobService;
 
     @GET
     @PermitAll
@@ -71,39 +77,31 @@ public class VideoResouce {
     @WithTransaction
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Uni<Response> upload(FileUploadInput input) {
-
-        System.out.println("title: " + input.title);
-        System.out.println("uploaderId: " + input.uploaderId);
-        System.out.println("fileUploadInput: " + input.video);
-        System.out.println("thumbnailUpload: " + input.thumbnail);
-
-        if (input.video == null) {
-            // create a Uni (async operation) to emit a BAD REQUEST response
-            return Uni.createFrom().item(Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Video file is missing").build());
-        }
-        if (input.thumbnail == null) {
-            return Uni.createFrom().item(Response.status(Response.Status.BAD_REQUEST)
-                    .entity("Thumbnail file is missing").build());
-        }
-
         String videoFileName = UUID.randomUUID().toString() + ".mp4";
         String thumbnailFileName = UUID.randomUUID().toString() + ".jpg";
+        java.nio.file.Path videoPath = input.video.uploadedFile();
+        java.nio.file.Path thumbnailPath = input.thumbnail.uploadedFile();
+        String containerName = "container-quarkus-azure-storage-blob-async";
 
-        System.out.println("videoFileName: " + videoFileName);
-        System.out.println("thumbnailFileName: " + thumbnailFileName);
+        return blobService.uploadBlob(containerName, videoFileName, videoPath)
+                .flatMap(videoUrl -> blobService
+                        .uploadBlob(containerName, thumbnailFileName, thumbnailPath)
+                        .flatMap(thumbnailUrl -> Panache.withSession(
+                                () -> User.findById(input.uploaderId).flatMap(userObj -> {
+                                    User user = (User) userObj;
+                                    Video video = new Video();
+                                    video.title = input.title;
+                                    video.url = videoUrl;
+                                    video.thumbnailUrl = thumbnailUrl;
+                                    video.uploader = user;
 
-        return Panache.withTransaction(() -> User.findById(input.uploaderId)).onItem().ifNotNull()
-                .transformToUni(uploader -> {
-                    Video video = new Video();
-                    video.title = input.title;
-                    video.url = "/uploads/" + videoFileName;
-                    video.thumbnailUrl = "/uploads/" + thumbnailFileName;
-                    video.uploader = (User) uploader;
-
-                    return video.persist().replaceWith(Response.ok(new VideoDTO(video))
-                            .status(Response.Status.CREATED).build());
-                });
+                                    return Panache.withTransaction(video::persist)
+                                            .replaceWith(() -> {
+                                                user.uploadedVideos.add(video);
+                                                return Response.ok(new VideoDTO(video))
+                                                        .status(Response.Status.CREATED).build();
+                                            });
+                                }))));
     }
 
     @POST
