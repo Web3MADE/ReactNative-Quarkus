@@ -28,6 +28,7 @@ public class VideoResouce {
     public static class FileUploadInput {
         // values are URL decoded by default
         // form field name is specified in the @FormParam annotation
+        // MAY need to change to RestForm if can't upload to Azure
         @FormParam("video")
         public FileUpload video;
 

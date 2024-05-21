@@ -3,7 +3,6 @@ package org.acme.azure;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.concurrent.CompletionStage;
-import org.jboss.resteasy.reactive.RestForm;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 import com.azure.core.util.BinaryData;
 import com.azure.storage.blob.BlobServiceAsyncClient;
@@ -13,29 +12,17 @@ import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.infrastructure.Infrastructure;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
-import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import reactor.core.publisher.Mono;;
 
-@Path("/azure")
 @ApplicationScoped
-public class StorageBlobAsyncResource {
+public class StorageBlobAsyncService {
 
         @Inject
         BlobServiceAsyncClient blobServiceAsyncClient;
 
-        @POST
-        // TODO: Remove HTTP logic, turn into a service
         // integrate into Video upload endpoint in VideoResource
-        @Consumes(MediaType.MULTIPART_FORM_DATA)
-        @Produces(MediaType.TEXT_PLAIN)
-        public Uni<Response> uploadBlob(@RestForm("fileUpload") FileUpload fileUpload) {
+        public Uni<Response> uploadBlob(FileUpload fileUpload) {
                 String containerName = "container-quarkus-azure-storage-blob-async";
                 String blobName = "quarkus-azure-storage-blob-async-" + System.currentTimeMillis()
                                 + ".txt";
@@ -72,10 +59,7 @@ public class StorageBlobAsyncResource {
                                 });
         }
 
-        @GET
-        @Path("/{fileName}")
-        @Produces(MediaType.APPLICATION_OCTET_STREAM)
-        public Uni<Response> downloadBlob(@PathParam("fileName") String fileName) {
+        public Uni<Response> downloadBlob(String fileName) {
                 System.out.println("blob to download: " + fileName);
                 BlobAsyncClientBase blobAsyncClient = blobServiceAsyncClient
                                 .getBlobContainerAsyncClient(
