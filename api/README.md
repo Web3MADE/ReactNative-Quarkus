@@ -71,3 +71,7 @@ Note: The username is quarkus, even though it's empty in the dev-ui config.
 ## Setup Postgres (optional)
 
 docker run -it --rm=true --name quarkus_test -e POSTGRES_USER=quarkus_test -e POSTGRES_PASSWORD=quarkus_test -e POSTGRES_DB=quarkus_test -p 5432:5432 postgres:13.3
+
+## Dev notes
+
+- Currently set to drop-and-create for DB, which wipes DB on every saved file in API. This can be annoying if unaware, but great for dev UX.
