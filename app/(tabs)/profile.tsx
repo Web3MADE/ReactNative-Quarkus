@@ -1,33 +1,46 @@
 // the page is dynamic based on user search query
-import { useLocalSearchParams } from "expo-router";
-import React from "react";
+import React, { useEffect } from "react";
 import { FlatList, Image, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { mockPosts } from "../(tabs)/home";
 import EmptyState from "../../components/EmptyState";
 import InfoBox from "../../components/InfoBox";
 import VideoCard from "../../components/VideoCard";
 import { icons } from "../../constants";
+import { useVideosByUploader } from "../hooks/useVideosByUploader";
+import { getUserId } from "../utils/getUserId";
 
 const mockAvatar = "https://picsum.photos/200";
-// This component renders a user's profile page with their uploaded videos
 const Profile = () => {
-  // TODO: implement search API functionality
-  const { query } = useLocalSearchParams();
+  const { loading, videos, getVideosByUploader } = useVideosByUploader();
+
+  useEffect(() => {
+    const init = async () => {
+      const userId = getUserId();
+
+      // TODO later: once auth is reimplemented push to login
+      if (!userId) {
+        console.error("User not logged in. No userID found.");
+        // router.push("/login");
+      }
+
+      await getVideosByUploader(1);
+    };
+    init();
+  }, []);
 
   const logout = () => {};
 
   return (
     <SafeAreaView className="bg-primary h-full">
       <FlatList
-        data={mockPosts}
-        keyExtractor={(item) => item.id}
+        data={videos}
+        keyExtractor={(item) => String(item.id)}
         renderItem={({ item }) => (
           <VideoCard
             title={item.title}
             thumbnail={item.thumbnail}
             video={item.video}
-            avatar={item.avatar}
+            avatar={item.thumbnail}
           />
         )}
         ListHeaderComponent={() => (
