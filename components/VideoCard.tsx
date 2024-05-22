@@ -8,6 +8,7 @@ interface IVideoCardProps {
   avatar?: string; // image uri
   thumbnail: string; // image uri
   video: string; // video uri
+  onLike: () => void;
 }
 
 const VideoCard = ({
@@ -16,6 +17,7 @@ const VideoCard = ({
   avatar,
   thumbnail,
   video,
+  onLike,
 }: IVideoCardProps) => {
   const [play, setPlay] = useState(false);
   return (
@@ -42,8 +44,20 @@ const VideoCard = ({
         </View>
 
         <View className="flex flex-row pt-2">
-          <Image source={icons.plus} className="w-5 h-5" resizeMode="contain" />
-          <Image source={icons.menu} className="w-5 h-5" resizeMode="contain" />
+          <TouchableOpacity onPress={onLike}>
+            <Image
+              source={icons.plus}
+              className="w-5 h-5"
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Image
+              source={icons.menu}
+              className="w-5 h-5"
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
         </View>
       </View>
 
