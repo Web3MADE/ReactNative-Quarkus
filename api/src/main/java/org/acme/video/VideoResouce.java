@@ -81,6 +81,7 @@ public class VideoResouce {
         String thumbnailFileName = UUID.randomUUID().toString() + ".jpg";
         java.nio.file.Path videoPath = input.video.uploadedFile();
         java.nio.file.Path thumbnailPath = input.thumbnail.uploadedFile();
+        // TODO refactor: containerName should be a constant
         String containerName = "container-quarkus-azure-storage-blob-async";
 
         return blobService.uploadBlob(containerName, videoFileName, videoPath)

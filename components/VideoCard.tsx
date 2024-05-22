@@ -1,14 +1,13 @@
 import { ResizeMode, Video } from "expo-av";
 import React, { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import localVideo from "../assets/videos/testMp4.mp4";
 import { icons } from "../constants";
 interface IVideoCardProps {
   title: string;
   creator?: string;
   avatar?: string; // image uri
   thumbnail: string; // image uri
-  video?: string; // video uri
+  video: string; // video uri
 }
 
 const VideoCard = ({
@@ -19,15 +18,13 @@ const VideoCard = ({
   video,
 }: IVideoCardProps) => {
   const [play, setPlay] = useState(false);
-  console.log("uri thumb ", thumbnail);
-
   return (
     <View className="flex flex-col items-center px-4 mb-14">
       <View className="flex flex-row gap-3 items-start">
         <View className="flex justify-center items-center flex-row flex-1">
           <View className="w-[46px] h-[46px] rounded-lg border border-secondary flex justify-center items-center p-0.5">
             <Image
-              source={{ uri: avatar }}
+              source={{ uri: thumbnail }}
               className="w-full h-full rounded-lg"
               resizeMode="cover"
             />
@@ -40,9 +37,7 @@ const VideoCard = ({
             >
               {title}
             </Text>
-            <Text className="text-xs text-gray-100 font-pregular">
-              {creator}
-            </Text>
+            <Text className="text-xs text-gray-100 font-pregular">{title}</Text>
           </View>
         </View>
 
@@ -54,8 +49,7 @@ const VideoCard = ({
 
       {play ? (
         <Video
-          // TODO: replace with item.video once API is finalized
-          source={localVideo}
+          source={{ uri: video }}
           className="w-full h-60 rounded-xl mt-3"
           resizeMode={ResizeMode.CONTAIN}
           useNativeControls

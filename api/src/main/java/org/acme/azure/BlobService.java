@@ -3,6 +3,7 @@ package org.acme.azure;
 import java.nio.file.Path;
 import com.azure.core.util.BinaryData;
 import com.azure.storage.blob.BlobServiceAsyncClient;
+import com.azure.storage.blob.models.BlobHttpHeaders;
 import com.azure.storage.blob.specialized.BlobAsyncClientBase;
 import com.azure.storage.blob.specialized.BlockBlobAsyncClient;
 import io.smallrye.mutiny.Uni;
@@ -34,10 +35,19 @@ public class BlobService {
                                 return Uni.createFrom().failure(new IllegalArgumentException(
                                                 "Binary data cannot be null"));
                         }
+                        /**
+                         * @dev Explicitly set headers for mp4 files to enable video streaming
+                         *      instead of downloading
+                         */
+                        BlobHttpHeaders headers = new BlobHttpHeaders().setContentType(
+                                        blobName.endsWith(".mp4") ? "video/mp4" : "image/jpeg");
 
-                        return Uni.createFrom().completionStage(
-                                        blobClient.upload(binaryData, true).toFuture())
-                                        .map(blockBlobItem -> {
+                        return Uni.createFrom()
+                                        .completionStage(blobClient.uploadWithResponse(
+                                                        binaryData.toFluxByteBuffer(),
+                                                        binaryData.getLength(), headers, null, null,
+                                                        null, null).toFuture())
+                                        .map(response -> {
                                                 String blobUrl = blobClient.getBlobUrl();
                                                 System.out.println("Successfully uploaded blob: "
                                                                 + blobName + " to URL: " + blobUrl);
@@ -50,7 +60,7 @@ public class BlobService {
 
                 } catch (Exception e) {
                         System.out.println(
-                                        "Exception occurred while creating BinaryData from input stream for blob: "
+                                        "Exception occurred while creating BinaryData from file for blob: "
                                                         + blobName + ". Error: " + e.getMessage());
                         return Uni.createFrom().failure(e);
                 }

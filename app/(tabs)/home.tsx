@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FlatList, Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import EmptyState from "../../components/EmptyState";
@@ -6,6 +6,7 @@ import SearchInput from "../../components/SearchInput";
 import Trending from "../../components/Trending";
 import VideoCard from "../../components/VideoCard";
 import { images } from "../../constants";
+import { useVideosFetch } from "../hooks/useVideosFetch";
 const mockImage = "https://picsum.photos/200";
 const mockImage2 = "https://picsum.photos/id/237/200/300";
 const mockImage3 = "https://picsum.photos/id/238/200/300";
@@ -37,14 +38,23 @@ export const mockPosts = [
   },
 ];
 const Home = () => {
-  // TODO: fetch all posts
-  // fetch latest posts
+  // TODO: refetch videos on scroll up feature
+  const { loading, videos, getAllVideos } = useVideosFetch();
+
+  useEffect(() => {
+    const init = async () => {
+      await getAllVideos();
+    };
+    init();
+  }, []);
+
+  // TODO: loading state for fetching posts
 
   return (
     <SafeAreaView className="bg-primary h-full">
       <FlatList
-        data={mockPosts}
-        keyExtractor={(item) => item.id}
+        data={videos}
+        keyExtractor={(item) => String(item.id)}
         renderItem={({ item }) => (
           <VideoCard
             title={item.title}
