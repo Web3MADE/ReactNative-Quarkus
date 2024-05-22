@@ -6,12 +6,14 @@ import EmptyState from "../../components/EmptyState";
 import InfoBox from "../../components/InfoBox";
 import VideoCard from "../../components/VideoCard";
 import { icons } from "../../constants";
+import { useLikeVideo } from "../hooks/useLikeVideo";
 import { useVideosByUploader } from "../hooks/useVideosByUploader";
 import { getUserId } from "../utils/getUserId";
 
 const mockAvatar = "https://picsum.photos/200";
 const Profile = () => {
   const { loading, videos, getVideosByUploader } = useVideosByUploader();
+  const { loading: likeLoading, likeVideo } = useLikeVideo();
 
   useEffect(() => {
     const init = async () => {
@@ -41,6 +43,7 @@ const Profile = () => {
             thumbnail={item.thumbnail}
             video={item.video}
             avatar={item.thumbnail}
+            onLike={() => likeVideo(item.id, 1)}
           />
         )}
         ListHeaderComponent={() => (
