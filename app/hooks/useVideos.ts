@@ -10,7 +10,7 @@ export interface IVideo {
   likes?: number;
 }
 // TODO refactor: update VideoDTO to match IVideo (same with UserDTO)
-export function useVideosFetch() {
+export function useVideos() {
   const [loading, setLoading] = useState(false);
   const [videos, setVideos] = useState<IVideo[]>([]);
 

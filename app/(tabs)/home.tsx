@@ -6,7 +6,7 @@ import SearchInput from "../../components/SearchInput";
 import Trending from "../../components/Trending";
 import VideoCard from "../../components/VideoCard";
 import { images } from "../../constants";
-import { useVideosFetch } from "../hooks/useVideosFetch";
+import { useVideos } from "../hooks/useVideos";
 const mockImage = "https://picsum.photos/200";
 const mockImage2 = "https://picsum.photos/id/237/200/300";
 const mockImage3 = "https://picsum.photos/id/238/200/300";
@@ -39,7 +39,7 @@ export const mockPosts = [
 ];
 const Home = () => {
   // TODO: refetch videos on scroll up feature
-  const { loading, videos, getAllVideos } = useVideosFetch();
+  const { loading, videos, getAllVideos } = useVideos();
 
   useEffect(() => {
     const init = async () => {
