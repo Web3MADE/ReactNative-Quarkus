@@ -7,7 +7,7 @@ import Trending from "../../components/Trending";
 import VideoCard from "../../components/VideoCard";
 import { images } from "../../constants";
 import { useLikeVideo } from "../hooks/useLikeVideo";
-import { useVideos } from "../hooks/useVideos";
+import useVideos from "../hooks/useVideos";
 const mockImage = "https://picsum.photos/200";
 const mockImage2 = "https://picsum.photos/id/237/200/300";
 const mockImage3 = "https://picsum.photos/id/238/200/300";
@@ -41,17 +41,30 @@ export const mockPosts = [
 const Home = () => {
   // TODO: auth context for user id
   // TODO: refetch videos on scroll up feature
-  const { loading, videos, getAllVideos } = useVideos();
-  const { loading: likeLoading, likeVideo } = useLikeVideo();
-
-  useEffect(() => {
-    const init = async () => {
-      await getAllVideos();
-    };
-    init();
-  }, []);
+  const { isLoading, isError, videos, refetch } = useVideos();
+  const { likeVideo, isErrorLikeVideo } = useLikeVideo();
 
   // TODO: loading state for fetching posts
+
+  useEffect(() => {
+    refetch();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <View>
+        <Text>Loading...</Text>
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View>
+        <Text>Error fetching videos</Text>
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -65,8 +78,8 @@ const Home = () => {
             video={item.video}
             avatar={item.avatar}
             creator={item.creator}
-            // TODO: auth context for user id
-            onLike={() => likeVideo(item.id, 1)}
+            // TODO: auth context for user
+            onLike={() => likeVideo({ videoId: item.id, userId: 1 })}
           />
         )}
         ListHeaderComponent={() => (

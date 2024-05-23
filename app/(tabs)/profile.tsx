@@ -1,5 +1,5 @@
 // the page is dynamic based on user search query
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import { FlatList, Image, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import EmptyState from "../../components/EmptyState";
@@ -7,28 +7,14 @@ import InfoBox from "../../components/InfoBox";
 import VideoCard from "../../components/VideoCard";
 import { icons } from "../../constants";
 import { useLikeVideo } from "../hooks/useLikeVideo";
-import { useVideosByUploader } from "../hooks/useVideosByUploader";
-import { getUserId } from "../utils/getUserId";
+import useVideosByUploader from "../hooks/useVideosByUploader";
 
 const mockAvatar = "https://picsum.photos/200";
 const Profile = () => {
-  const { loading, videos, getVideosByUploader } = useVideosByUploader();
-  const { loading: likeLoading, likeVideo } = useLikeVideo();
-
-  useEffect(() => {
-    const init = async () => {
-      const userId = getUserId();
-
-      // TODO later: once auth is reimplemented push to login
-      if (!userId) {
-        console.error("User not logged in. No userID found.");
-        // router.push("/login");
-      }
-
-      await getVideosByUploader(1);
-    };
-    init();
-  }, []);
+  // TODO: auth context for user id
+  const [userId, setUserId] = useState(1);
+  const { videos, isLoading, isError } = useVideosByUploader(userId);
+  const { likeVideo, isErrorLikeVideo } = useLikeVideo();
 
   const logout = () => {};
 
@@ -43,7 +29,7 @@ const Profile = () => {
             thumbnail={item.thumbnail}
             video={item.video}
             avatar={item.thumbnail}
-            onLike={() => likeVideo(item.id, 1)}
+            onLike={() => likeVideo({ videoId: item.id, userId: 1 })}
           />
         )}
         ListHeaderComponent={() => (

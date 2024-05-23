@@ -1,33 +1,24 @@
-import { useState } from "react";
-import { IVideo } from "./useVideos";
+import { useQuery } from "@tanstack/react-query";
 
-export function useVideosByUploader() {
-  const [loading, setLoading] = useState(false);
-  const [videos, setVideos] = useState<IVideo[]>([]);
+const GET_UPLOADER_VIDEOS_KEY = "GET_UPLOADER_VIDEOS";
 
-  const getVideosByUploader = async (uploaderId: number) => {
-    setLoading(true);
-    try {
-      const res = await fetch(
-        `http://localhost:8080/api/videos/uploader/${uploaderId}`
-      );
-      const data = await res.json();
+const fetchVideosByUploader = async (uploaderId: number) => {
+  const response = await fetch(
+    `http://localhost:8080/api/videos/uploader/${uploaderId}`
+  );
+  if (!response.ok) {
+    throw new Error("Failed to fetch videos");
+  }
+  return response.json();
+};
 
-      const mappedData = data.map((video: any) => ({
-        id: video.id,
-        title: video.title,
-        video: video.url,
-        thumbnail: video.thumbnailUrl,
-        likes: video.likes,
-      }));
+export default function useVideosByUploader(uploaderId: number) {
+  const { data, isError, isLoading } = useQuery({
+    queryKey: [GET_UPLOADER_VIDEOS_KEY],
+    queryFn: () => fetchVideosByUploader(uploaderId),
+  });
 
-      setVideos(mappedData);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const videos = data ? data : [];
 
-  return { loading, videos, getVideosByUploader };
+  return { isLoading, isError, videos };
 }

@@ -1,33 +1,24 @@
-import { useState } from "react";
-import { IVideo } from "./useVideos";
+import { useQuery } from "@tanstack/react-query";
 
-export function useLikedVideos() {
-  const [loading, setLoading] = useState(false);
-  const [videos, setVideos] = useState<IVideo[]>([]);
+export const GET_LIKED_VIDEOS_KEY = ["GET_LIKED_VIDEOS"];
 
-  const getLikedVideos = async (userId: number) => {
-    try {
-      setLoading(true);
-      const res = await fetch(
-        `http://localhost:8080/api/videos/liked/${userId}`
-      );
-      const data = await res.json();
-      const mappedData = data.map((video: any) => ({
-        id: video.id,
-        title: video.title,
-        video: video.url,
-        thumbnail: video.thumbnailUrl,
-        likes: video.likes,
-        isLiked: true,
-      }));
+const fetchLikedVideos = async (userId: number) => {
+  const response = await fetch(
+    `http://localhost:8080/api/videos/liked/${userId}`
+  );
+  if (!response.ok) {
+    throw new Error("Failed to fetch liked videos");
+  }
+  return response.json();
+};
 
-      setVideos(mappedData);
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
-  };
+export function useLikedVideos(userId: number) {
+  const { data, isLoading, isError } = useQuery({
+    queryKey: GET_LIKED_VIDEOS_KEY,
+    queryFn: () => fetchLikedVideos(userId),
+  });
 
-  return { loading, videos, getLikedVideos };
+  const videos = data ? data : [];
+
+  return { isLoading, isError, videos };
 }

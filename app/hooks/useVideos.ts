@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { mapVideos } from "../utils/mapper";
 
 export interface IVideo {
   id: number;
@@ -10,32 +11,26 @@ export interface IVideo {
   likes?: number;
   isLiked?: boolean;
 }
-// TODO refactor: update VideoDTO to match IVideo (same with UserDTO)
-export function useVideos() {
-  const [loading, setLoading] = useState(false);
-  const [videos, setVideos] = useState<IVideo[]>([]);
 
-  const getAllVideos = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("http://localhost:8080/api/videos");
-      const data = await res.json();
+const GET_ALL_VIDEOS_KEY = "GET_ALL_VIDEOS";
 
-      const mappedData = data.map((video: any) => ({
-        id: video.id,
-        title: video.title,
-        video: video.url,
-        thumbnail: video.thumbnailUrl,
-        likes: video.likes,
-      }));
+const fetchAllVideos = async () => {
+  const response = await fetch("http://localhost:8080/api/videos");
+  if (!response.ok) {
+    throw new Error("Failed to fetch videos");
+  }
+  return response.json();
+};
 
-      setVideos(mappedData);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+export default function useVideos() {
+  const { data, refetch, isError, isLoading } = useQuery({
+    queryKey: [GET_ALL_VIDEOS_KEY],
+    queryFn: fetchAllVideos,
+    refetchOnWindowFocus: true,
+  });
 
-  return { loading, videos, getAllVideos };
+  const videos = data ? mapVideos(data) : [];
+  console.log("videos in useVideos", videos);
+
+  return { isLoading, isError, videos, refetch };
 }

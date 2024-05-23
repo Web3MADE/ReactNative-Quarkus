@@ -1,28 +1,12 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { FlatList, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SearchInput from "../../components/SearchInput";
 import VideoCard from "../../components/VideoCard";
 import { useLikedVideos } from "../hooks/useLikedVideos";
-import { getUserId } from "../utils/getUserId";
-//TODO: implement bookmark scaffold UI
 const bookmark = () => {
-  const { loading, videos, getLikedVideos } = useLikedVideos();
-
-  useEffect(() => {
-    const init = async () => {
-      const userId = getUserId();
-
-      // TODO later: once auth is reimplemented push to login
-      if (!userId) {
-        console.error("User not logged in. No userID found.");
-        // router.push("/login");
-      }
-
-      await getLikedVideos(1);
-    };
-    init();
-  }, []);
+  // TODO: auth context for user id
+  const { videos } = useLikedVideos(1);
 
   return (
     <SafeAreaView className="bg-primary h-full">
