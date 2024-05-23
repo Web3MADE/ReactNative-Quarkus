@@ -8,6 +8,7 @@ export interface IVideo {
   avatar?: string;
   creator?: string;
   likes?: number;
+  isLiked?: boolean;
 }
 // TODO refactor: update VideoDTO to match IVideo (same with UserDTO)
 export function useVideos() {

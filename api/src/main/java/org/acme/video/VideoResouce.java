@@ -73,9 +73,9 @@ public class VideoResouce {
     }
 
     @GET
-    @Path("/likedBy/{id}")
+    @Path("/liked/{id}")
     @PermitAll
-    public Uni<List<VideoDTO>> getVideosLikedByUser(@PathParam("id") Long id) {
+    public Uni<List<VideoDTO>> getLikedVideosByUser(@PathParam("id") Long id) {
         return User.findById(id).onItem().ifNotNull().transformToUni(userObj -> {
             // fetch user from DB and typecast to User (will clean up in refactor)
             User user = (User) userObj;
