@@ -13,6 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../../components/CustomButton";
 import FormField from "../../components/FormField";
 import { icons } from "../../constants";
+import { useUploadVideo } from "../hooks/useUploadVideo";
 
 interface ICreateForm {
   title: string;
@@ -22,7 +23,8 @@ interface ICreateForm {
 }
 
 const Create = () => {
-  const [uploading, setUploading] = useState(false);
+  const { upload, isUploading, isErrorUpload, uploadError, isUploadSuccess } =
+    useUploadVideo();
   const [form, setform] = useState<ICreateForm>({
     title: "",
     video: null,
@@ -49,39 +51,22 @@ const Create = () => {
     if (!isFormValid(form)) {
       return Alert.alert("Error", "Please fill all fields");
     }
+    upload(form);
+    // router.push("/home");
 
-    setUploading(true);
-    try {
-      const formData = new FormData();
-      formData.append("title", form.title);
-      formData.append("uploaderId", "1"); // TODO: get user id from auth context
-      formData.append("video", form.video?.uri ?? "");
-      formData.append("thumbnail", form.thumbnail?.uri ?? "");
+    if (isErrorUpload) {
+      Alert.alert("Error", "An error occurred while uploading the post ");
+      throw new Error(`error occured during upload: ${uploadError})`);
+    }
 
-      const res = await fetch("http://localhost:8080/api/videos", {
-        method: "POST",
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        body: formData,
-      });
-      console.log("data uploaded ", res);
+    if (isUploadSuccess) {
       Alert.alert("Success", "Post uploaded successfully");
-      // router.push("/home");
-    } catch (error) {
-      if (error instanceof Error) {
-        Alert.alert("Error message obj", error.message ?? "An error occurred");
-      } else if (typeof error === "string") {
-        Alert.alert("Error String", error);
-      }
-    } finally {
       setform({
         title: "",
         video: null,
         thumbnail: null,
         prompt: "",
       });
-      setUploading(false);
     }
   };
 
@@ -163,7 +148,7 @@ const Create = () => {
           title="Submit & Publish"
           handlePress={submit}
           containerStyles="mt-7"
-          isLoading={uploading}
+          isLoading={isUploading}
         />
       </ScrollView>
     </SafeAreaView>
