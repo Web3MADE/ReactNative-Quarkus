@@ -26,7 +26,9 @@ import jakarta.ws.rs.core.Response;
 @ApplicationScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-// TODO: test out endpoints with new Reactive panache API
+// TODOs:
+// add custom static queries to return User instead of generic PanacheEntity (findById returns a
+// User class that doesn't need casting in-code)
 public class UserResource {
 
     @Inject

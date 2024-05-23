@@ -72,6 +72,21 @@ public class VideoResouce {
                 .ifNull().continueWith(Response.status(Response.Status.NOT_FOUND).build());
     }
 
+    @GET
+    @Path("/likedBy/{id}")
+    @PermitAll
+    public Uni<List<VideoDTO>> getVideosLikedByUser(@PathParam("id") Long id) {
+        return User.findById(id).onItem().ifNotNull().transformToUni(userObj -> {
+            // fetch user from DB and typecast to User (will clean up in refactor)
+            User user = (User) userObj;
+            // map liked videos to VideoDTOs & return as list
+            List<VideoDTO> likedVids = user.likedVideos.stream().map(video -> new VideoDTO(video))
+                    .collect(Collectors.toList());
+            // create Uni from list of VideoDTOs
+            return Uni.createFrom().item(likedVids);
+        });
+    }
+
     @POST
     @PermitAll
     @WithTransaction
