@@ -12,7 +12,7 @@ export interface IVideo {
   isLiked?: boolean;
 }
 
-const GET_ALL_VIDEOS_KEY = "GET_ALL_VIDEOS";
+const GET_ALL_VIDEOS_KEY = ["GET_ALL_VIDEOS"];
 
 const fetchAllVideos = async () => {
   const response = await fetch("http://localhost:8080/api/videos");
@@ -24,7 +24,7 @@ const fetchAllVideos = async () => {
 
 export default function useVideos() {
   const { data, refetch, isError, isLoading } = useQuery({
-    queryKey: [GET_ALL_VIDEOS_KEY],
+    queryKey: GET_ALL_VIDEOS_KEY,
     queryFn: fetchAllVideos,
     refetchOnWindowFocus: true,
   });
