@@ -1,20 +1,28 @@
 // the page is dynamic based on user search query
 import React, { useState } from "react";
-import { FlatList, Image, TouchableOpacity, View } from "react-native";
+import {
+  FlatList,
+  Image,
+  RefreshControl,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import EmptyState from "../../components/EmptyState";
 import InfoBox from "../../components/InfoBox";
 import VideoCard from "../../components/VideoCard";
 import { icons } from "../../constants";
 import { useLikeVideo } from "../hooks/useLikeVideo";
+import useRefresh from "../hooks/useRefresh";
 import useVideosByUploader from "../hooks/useVideosByUploader";
 
 const mockAvatar = "https://picsum.photos/200";
 const Profile = () => {
   // TODO: auth context for user id
   const [userId, setUserId] = useState(1);
-  const { videos, isLoading, isError } = useVideosByUploader(userId);
+  const { videos, isLoading, isError, refetch } = useVideosByUploader(userId);
   const { likeVideo, isErrorLikeVideo } = useLikeVideo();
+  const { refreshing, onRefresh } = useRefresh();
 
   const logout = () => {};
 
@@ -82,6 +90,12 @@ const Profile = () => {
             subtitle="Be the first one to upload a video!"
           />
         )}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => onRefresh({ refetch })}
+          />
+        }
       />
     </SafeAreaView>
   );

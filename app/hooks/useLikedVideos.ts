@@ -13,12 +13,12 @@ const fetchLikedVideos = async (userId: number) => {
 };
 
 export function useLikedVideos(userId: number) {
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: GET_LIKED_VIDEOS_KEY,
     queryFn: () => fetchLikedVideos(userId),
   });
 
   const videos = data ? data : [];
 
-  return { isLoading, isError, videos };
+  return { isLoading, isError, videos, refetch };
 }

@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { FlatList, Image, Text, View } from "react-native";
+import React from "react";
+import { FlatList, Image, RefreshControl, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import EmptyState from "../../components/EmptyState";
 import SearchInput from "../../components/SearchInput";
@@ -7,6 +7,7 @@ import Trending from "../../components/Trending";
 import VideoCard from "../../components/VideoCard";
 import { images } from "../../constants";
 import { useLikeVideo } from "../hooks/useLikeVideo";
+import useRefresh from "../hooks/useRefresh";
 import useVideos from "../hooks/useVideos";
 const mockImage = "https://picsum.photos/200";
 const mockImage2 = "https://picsum.photos/id/237/200/300";
@@ -43,13 +44,7 @@ const Home = () => {
   // TODO: refetch videos on scroll up feature
   const { isLoading, isError, videos, refetch } = useVideos();
   const { likeVideo, isErrorLikeVideo } = useLikeVideo();
-
-  // TODO: loading state for fetching posts
-
-  useEffect(() => {
-    refetch();
-  }, []);
-
+  const { refreshing, onRefresh } = useRefresh();
   if (isLoading) {
     return (
       <View>
@@ -115,6 +110,12 @@ const Home = () => {
             subtitle="Be the first one to upload a video!"
           />
         )}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => onRefresh({ refetch })}
+          />
+        }
       />
     </SafeAreaView>
   );

@@ -1,12 +1,14 @@
 import React from "react";
-import { FlatList, Text, View } from "react-native";
+import { FlatList, RefreshControl, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import SearchInput from "../../components/SearchInput";
 import VideoCard from "../../components/VideoCard";
 import { useLikedVideos } from "../hooks/useLikedVideos";
+import useRefresh from "../hooks/useRefresh";
 const bookmark = () => {
   // TODO: auth context for user id
-  const { videos } = useLikedVideos(1);
+  const { videos, refetch } = useLikedVideos(1);
+  const { refreshing, onRefresh } = useRefresh();
 
   return (
     <SafeAreaView className="bg-primary h-full">
@@ -34,6 +36,12 @@ const bookmark = () => {
             <SearchInput placeholder="Search your saved videos" />
           </View>
         )}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => onRefresh({ refetch })}
+          />
+        }
       />
     </SafeAreaView>
   );

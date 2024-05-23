@@ -13,12 +13,12 @@ const fetchVideosByUploader = async (uploaderId: number) => {
 };
 
 export default function useVideosByUploader(uploaderId: number) {
-  const { data, isError, isLoading } = useQuery({
+  const { data, isError, isLoading, refetch } = useQuery({
     queryKey: GET_UPLOADER_VIDEOS_KEY,
     queryFn: () => fetchVideosByUploader(uploaderId),
   });
 
   const videos = data ? data : [];
 
-  return { isLoading, isError, videos };
+  return { isLoading, isError, videos, refetch };
 }
