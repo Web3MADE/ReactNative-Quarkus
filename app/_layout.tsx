@@ -1,3 +1,4 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import React, { useEffect } from "react";
@@ -7,6 +8,7 @@ SplashScreen.preventAutoHideAsync();
 // TODO: Finish RN tutorial
 // Fonts not importing correctly...
 const RootLayout = () => {
+  const queryClient = new QueryClient();
   const [loaded, error] = useFonts({
     "Poppins-Black": require("../assets/fonts/Poppins-Black.ttf"),
     // "Poppins-Bold": require("../assets/fonts/Poppins-Bold.ttf"),
@@ -28,12 +30,14 @@ const RootLayout = () => {
   }, [loaded, error]);
 
   return (
-    <Stack>
-      <Stack.Screen name="index" options={{ headerShown: false }} />
-      <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      <Stack.Screen name="search/[query]" options={{ headerShown: false }} />
-    </Stack>
+    <QueryClientProvider client={queryClient}>
+      <Stack>
+        <Stack.Screen name="index" options={{ headerShown: false }} />
+        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="search/[query]" options={{ headerShown: false }} />
+      </Stack>
+    </QueryClientProvider>
   );
 };
 
