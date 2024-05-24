@@ -19,6 +19,7 @@ import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 
@@ -85,6 +86,14 @@ public class VideoResouce {
             // create Uni from list of VideoDTOs
             return Uni.createFrom().item(likedVids);
         });
+    }
+
+    @GET
+    @Path("/search")
+    @PermitAll
+    public Uni<List<VideoDTO>> searchVideos(@QueryParam("query") String query) {
+        return Video.findByTitle(query).map(videos -> videos.stream()
+                .map(video -> new VideoDTO((Video) video)).collect(Collectors.toList()));
     }
 
     @POST
