@@ -25,9 +25,9 @@ public class BlobService {
                                 .getBlobAsyncClient(blobName).getBlockBlobAsyncClient();
 
                 try {
+                        System.out.println("Uploading blob: " + blobName + " to container: "
+                                        + containerName + " from file: " + filePath);
                         BinaryData binaryData = BinaryData.fromFile(filePath);
-
-                        System.out.println(binaryData);
 
                         if (binaryData.getLength() == null) {
                                 System.out.println("Binary data is null for input stream of blob: "
