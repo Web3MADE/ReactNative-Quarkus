@@ -15,7 +15,7 @@ import FormField from "../../components/FormField";
 import { icons } from "../../constants";
 import { useUploadVideo } from "../hooks/useUploadVideo";
 
-interface ICreateForm {
+export interface IUploadVideo {
   title: string;
   video: ImagePicker.ImagePickerAsset | null;
   thumbnail: ImagePicker.ImagePickerAsset | null;
@@ -25,7 +25,7 @@ interface ICreateForm {
 const Create = () => {
   const { upload, isUploading, isErrorUpload, uploadError, isUploadSuccess } =
     useUploadVideo();
-  const [form, setform] = useState<ICreateForm>({
+  const [form, setform] = useState<IUploadVideo>({
     title: "",
     video: null,
     thumbnail: null,
@@ -155,7 +155,7 @@ const Create = () => {
   );
 };
 
-function isFormValid(form: ICreateForm) {
+function isFormValid(form: IUploadVideo) {
   return Object.values(form).every((value) => value !== null || value !== "");
 }
 
