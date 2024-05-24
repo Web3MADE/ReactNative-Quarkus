@@ -1,20 +1,11 @@
 import { router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
 import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../components/CustomButton";
 import { images } from "../constants";
 
 export default function App() {
-  useEffect(() => {
-    const init = async () => {
-      const res = await fetch("http://localhost:8080/hello");
-      console.log("res fetched ", res);
-    };
-
-    init();
-  }, []);
   return (
     <SafeAreaView className="bg-primary h-full">
       <ScrollView contentContainerStyle={{ height: "100%" }}>
