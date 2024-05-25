@@ -1,13 +1,6 @@
 import { QueryClient, useMutation } from "@tanstack/react-query";
-import * as ImagePicker from "expo-image-picker";
+import { IUploadVideo } from "../(tabs)/create";
 import { GET_LIKED_VIDEOS_KEY } from "./useLikedVideos";
-
-interface IUploadVideo {
-  title: string;
-  video: ImagePicker.ImagePickerAsset | null;
-  thumbnail: ImagePicker.ImagePickerAsset | null;
-  prompt: string;
-}
 
 const uriToBlob = async (uri: string) => {
   try {
@@ -33,35 +26,33 @@ const uriToFile = async (uri: string, name: string, type: string) => {
     throw error;
   }
 };
-
 const uploadVideo = async (form: IUploadVideo) => {
   const formData = new FormData();
   formData.append("title", form.title);
   formData.append("uploaderId", "1"); // TODO: get user id from auth context
-  // TODO: uploaded files are null in the form
-  // formData.append("video", form.video?.uri ?? "");
-  // formData.append("thumbnail", form.thumbnail?.uri ?? "");
+  formData.append("thumbnail", form.thumbnail?.uri ?? "");
+  formData.append("video", form.video?.uri ?? "");
   console.log("form.video?.uri ", form.video?.uri);
   console.log("form.thumbnail?.uri ", form.thumbnail?.uri);
 
-  const videoFile = await uriToFile(
-    form.video?.uri ?? "",
-    "video.mp4",
-    "video/mp4"
-  );
-  const thumbnailFile = await uriToFile(
-    form.thumbnail?.uri ?? "",
-    "thumbnail.jpg",
-    "image/jpeg"
-  );
-  console.log("videoFile ", videoFile);
-  console.log("thumbnailFile ", thumbnailFile);
+  // const videoFile = await uriToFile(
+  //   form.video?.uri ?? "",
+  //   "video.mp4",
+  //   "video/mp4"
+  // );
+  // const thumbnailFile = await uriToFile(
+  //   form.thumbnail?.uri ?? "",
+  //   "thumbnail.jpg",
+  //   "image/jpeg"
+  // );
+  // console.log("videoFile ", videoFile);
+  // console.log("thumbnailFile ", thumbnailFile);
   // TODO:
   // formData not working with files, they contain data but the file itself if empty
   // Moving forward, we need to ensure the API logic is tested with desired file types
   // Then, the client side logic can be tested with the correct file types
-  formData.append("video", videoFile);
-  formData.append("thumbnail", thumbnailFile);
+  // formData.append("video", videoFile);
+  // formData.append("thumbnail", thumbnailFile);
 
   console.log("formData ", formData);
 
