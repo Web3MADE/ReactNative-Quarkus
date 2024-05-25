@@ -42,24 +42,10 @@ export const mockPosts = [
 const Home = () => {
   // TODO: auth context for user id
   // TODO: refetch videos on scroll up feature
-  const { isLoading, isError, videos, refetch } = useVideos();
+  const { videos, refetch } = useVideos();
   const { likeVideo, isErrorLikeVideo } = useLikeVideo();
   const { refreshing, onRefresh } = useRefresh();
-  if (isLoading) {
-    return (
-      <View>
-        <Text>Loading...</Text>
-      </View>
-    );
-  }
-
-  if (isError) {
-    return (
-      <View>
-        <Text>Error fetching videos</Text>
-      </View>
-    );
-  }
+  // TOD: handle search vs all videos after [query].tsx
 
   return (
     <SafeAreaView className="bg-primary h-full">

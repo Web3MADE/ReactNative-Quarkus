@@ -10,6 +10,10 @@ const SearchInput = ({ initialQuery, placeholder }: ISearchInputProps) => {
   const pathname = usePathname();
   const [query, setQuery] = useState(initialQuery || "");
 
+  function handleQuery(e: string) {
+    setQuery(e);
+  }
+
   return (
     <View className="w-full h-16 px-4 bg-black-100 rounded-2xl border-2 border-black-200 focus:border-secondary flex flex-row items-center space-x-4">
       <TextInput
@@ -17,16 +21,11 @@ const SearchInput = ({ initialQuery, placeholder }: ISearchInputProps) => {
         value={query}
         placeholder={placeholder}
         placeholderTextColor="#CDCDE0"
-        onChangeText={(e) => setQuery(e)}
+        onChangeText={handleQuery}
         style={{ alignSelf: "center" }}
       />
       <TouchableOpacity
         onPress={() => {
-          console.log("query", query);
-          if (!query) {
-            router.back();
-          }
-
           if (pathname.startsWith("/search")) {
             router.setParams({ query });
           } else {
