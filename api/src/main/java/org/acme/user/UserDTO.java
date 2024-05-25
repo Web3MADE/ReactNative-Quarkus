@@ -6,11 +6,14 @@ import org.acme.video.VideoDTO;
 
 /** @dev UserDTO to be returned from API since it contains VideoDTOs within uploaded/liked videos */
 public class UserDTO {
-    public Long id;
-    public String name;
-    public String email;
-    public Set<VideoDTO> uploadedVideos;
-    public Set<VideoDTO> likedVideos;
+    private Long id;
+    private String name;
+    private String email;
+    private String password;
+    private Set<VideoDTO> uploadedVideos;
+    private Set<VideoDTO> likedVideos;
+
+    public UserDTO() {}
 
     public UserDTO(User user) {
         this.id = user.id;
@@ -26,5 +29,53 @@ public class UserDTO {
             this.likedVideos =
                     user.likedVideos.stream().map(VideoDTO::new).collect(Collectors.toSet());
         }
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Set<VideoDTO> getUploadedVideos() {
+        return uploadedVideos;
+    }
+
+    public void setUploadedVideos(Set<VideoDTO> uploadedVideos) {
+        this.uploadedVideos = uploadedVideos;
+    }
+
+    public Set<VideoDTO> getLikedVideos() {
+        return likedVideos;
+    }
+
+    public void setLikedVideos(Set<VideoDTO> likedVideos) {
+        this.likedVideos = likedVideos;
     }
 }
