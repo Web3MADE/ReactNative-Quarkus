@@ -28,6 +28,8 @@ public class UserService {
         return userRepo.createUser(userDTO);
     }
 
-
-
+    public Uni<UserDTO> findByEmail(String email) {
+        Uni<User> user = userRepo.findByEmail(email);
+        return user.map(u -> new UserDTO(u));
+    }
 }

@@ -28,4 +28,7 @@ public class UserRepository implements PanacheRepository<User> {
         return Uni.createFrom().item(new UserDTO(user));
     }
 
+    public Uni<User> findByEmail(String email) {
+        return User.find("email", email).firstResult();
+    }
 }
