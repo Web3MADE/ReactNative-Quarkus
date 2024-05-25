@@ -21,7 +21,7 @@ public class UserRepository implements PanacheRepository<User> {
 
     public Uni<UserDTO> createUser(UserDTO userDTO) {
         User user = new User();
-        user.name = userDTO.name;
+        user.name = userDTO.getName();
         user.email = userDTO.getEmail();
         user.password = userDTO.getPassword();
         user.persist();
