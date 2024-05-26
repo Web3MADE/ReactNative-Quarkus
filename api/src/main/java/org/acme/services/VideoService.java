@@ -27,6 +27,11 @@ public class VideoService {
         return videoRepo.getVideoById(id).map(this::mapVideoToVideoDTO);
     }
 
+    public Uni<List<VideoDTO>> getVideosByUploader(Long id) {
+        return videoRepo.getVideosByUploader(id).map(videos -> videos.stream()
+                .map(this::mapVideoToVideoDTO).collect(Collectors.toList()));
+    }
+
     public Uni<Video> createVideo(String title, String url, String thumbnailUrl, User user) {
         return videoRepo.createVideo(title, url, thumbnailUrl, user);
     }

@@ -86,6 +86,23 @@ public class VideoServiceTest {
 
     @RunOnVertxContext
     @Test
+    void testGetVideosByUploader(UniAsserter asserter) {
+        // arrange
+        Long id = user.id;
+        // act
+        asserter.execute(() -> {
+            when(videoRepo.getVideosByUploader(id))
+                    .thenReturn(Uni.createFrom().item(List.of(video)));
+            return Uni.createFrom().voidItem();
+        });
+
+        asserter.assertThat(() -> videoService.getVideosByUploader(id), videoDTOs -> {
+            videoDTOs.equals(List.of(new VideoDTO(video)));
+        });
+    }
+
+    @RunOnVertxContext
+    @Test
     void testCreateVideo(TransactionalUniAsserter asserter) {
         // arrange
         String title = "test";

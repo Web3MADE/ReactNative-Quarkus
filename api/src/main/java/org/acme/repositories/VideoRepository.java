@@ -18,6 +18,10 @@ public class VideoRepository implements PanacheRepository<Video> {
         return Video.findById(id);
     }
 
+    public Uni<List<Video>> getVideosByUploader(Long id) {
+        return Video.list("uploader.id", id);
+    }
+
     public Uni<List<Video>> searchByTitle(String title) {
         return Video.list("title", title);
     }
