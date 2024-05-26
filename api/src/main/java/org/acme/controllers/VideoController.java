@@ -1,7 +1,6 @@
 package org.acme.controllers;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import org.acme.services.BlobService;
 import org.acme.services.UserService;
@@ -113,32 +112,11 @@ public class VideoController {
     @WithTransaction
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Uni<Response> upload(FileUploadInput input) {
-        String videoFileName = UUID.randomUUID().toString() + ".mp4";
-        String thumbnailFileName = UUID.randomUUID().toString() + ".jpg";
-        java.nio.file.Path videoPath = input.video.uploadedFile();
-        java.nio.file.Path thumbnailPath = input.thumbnail.uploadedFile();
-        // TODO refactor: containerName should be a constant
-        String containerName = "container-quarkus-azure-storage-blob-async";
-
-        return blobService.uploadBlob(containerName, videoFileName, videoPath)
-                .flatMap(videoUrl -> blobService
-                        .uploadBlob(containerName, thumbnailFileName, thumbnailPath)
-                        .flatMap(thumbnailUrl -> Panache.withSession(
-                                () -> User.findById(input.uploaderId).flatMap(userObj -> {
-                                    User user = (User) userObj;
-                                    Video video = new Video();
-                                    video.title = input.title;
-                                    video.url = videoUrl;
-                                    video.thumbnailUrl = thumbnailUrl;
-                                    video.uploader = user;
-
-                                    return Panache.withTransaction(video::persist)
-                                            .replaceWith(() -> {
-                                                user.uploadedVideos.add(video);
-                                                return Response.ok(new VideoDTO(video))
-                                                        .status(Response.Status.CREATED).build();
-                                            });
-                                }))));
+        return videoService.uploadVideo(input)
+                .map(videoDTO -> Response.ok(videoDTO).status(Response.Status.CREATED).build())
+                .onFailure()
+                .recoverWithItem(th -> Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .entity(th.getMessage()).build());
     }
 
     @POST

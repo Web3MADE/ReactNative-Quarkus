@@ -12,6 +12,7 @@ import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
+// TODO: Do some BO refactoring
 @ApplicationScoped
 public class UserService {
 
@@ -46,6 +47,10 @@ public class UserService {
             return null;
         }
         return userRepo.createUser(userDTO);
+    }
+
+    public Uni<User> persistAndFlush(User user) {
+        return userRepo.persistAndFlush(user);
     }
 
     private UserDTO mapUserToUserDTO(User user) {

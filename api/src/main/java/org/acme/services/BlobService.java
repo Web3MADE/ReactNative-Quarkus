@@ -19,7 +19,6 @@ public class BlobService {
         BlobServiceAsyncClient blobServiceAsyncClient;
 
         public Uni<String> uploadBlob(String containerName, String blobName, Path filePath) {
-
                 BlockBlobAsyncClient blobClient = blobServiceAsyncClient
                                 .getBlobContainerAsyncClient(containerName)
                                 .getBlobAsyncClient(blobName).getBlockBlobAsyncClient();
@@ -35,10 +34,9 @@ public class BlobService {
                                 return Uni.createFrom().failure(new IllegalArgumentException(
                                                 "Binary data cannot be null"));
                         }
-                        /**
-                         * @dev Explicitly set headers for mp4 files to enable video streaming
-                         *      instead of downloading
-                         */
+
+                        // Explicitly set headers for mp4 files to enable video streaming instead of
+                        // downloading
                         BlobHttpHeaders headers = new BlobHttpHeaders().setContentType(
                                         blobName.endsWith(".mp4") ? "video/mp4" : "image/jpeg");
 
@@ -64,6 +62,16 @@ public class BlobService {
                                                         + blobName + ". Error: " + e.getMessage());
                         return Uni.createFrom().failure(e);
                 }
+        }
+
+        public Uni<String[]> uploadFiles(String containerName, String videoFileName,
+                        String thumbnailFileName, Path videoPath, Path thumbnailPath) {
+                Uni<String> videoUrlUni = uploadBlob(containerName, videoFileName, videoPath);
+                Uni<String> thumbnailUrlUni =
+                                uploadBlob(containerName, thumbnailFileName, thumbnailPath);
+
+                return Uni.combine().all().unis(videoUrlUni, thumbnailUrlUni).asTuple()
+                                .map(tuple -> new String[] {tuple.getItem1(), tuple.getItem2()});
         }
 
         public Uni<Response> downloadBlob(String fileName) {
