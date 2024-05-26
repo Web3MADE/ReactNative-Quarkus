@@ -4,13 +4,14 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import org.acme.controllers.VideoController.FileUploadInput;
 import org.acme.repositories.UserRepository;
 import org.acme.repositories.VideoRepository;
 import org.acme.user.User;
 import org.acme.utils.Constants;
+import org.acme.video.FileUploadInput;
 import org.acme.video.Video;
 import org.acme.video.VideoDTO;
+import io.quarkus.hibernate.reactive.panache.Panache;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -86,13 +87,17 @@ public class VideoService {
         video.thumbnailUrl = thumbnailUrl;
         video.uploader = user;
 
-        return video.persist().flatMap(v -> updateUserWithVideo(user, video));
+        return Panache.withTransaction(() -> {
+            return videoRepo.persist(video).flatMap(v -> updateUserWithVideo(user, v))
+                    .replaceWith(video);
+        });
     }
 
     private Uni<Video> updateUserWithVideo(User user, Video video) {
         user.uploadedVideos.add(video);
-        return userService.persistAndFlush(user).replaceWith(video);
+        return userRepo.persistAndFlush(user).replaceWith(video);
     }
+
 
     private VideoDTO mapVideoToVideoDTO(Video video) {
         if (video == null) {
