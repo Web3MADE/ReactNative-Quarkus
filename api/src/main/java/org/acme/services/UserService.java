@@ -71,18 +71,4 @@ public class UserService {
 
         return userDTO;
     }
-
-    private User mapUserDTOtoUser(UserDTO userDTO) {
-        if (userDTO == null) {
-            return null;
-        }
-
-        User user = new User();
-        user.id = userDTO.getId();
-        user.name = userDTO.getName();
-        user.email = userDTO.getEmail();
-        user.password = userDTO.getPassword(); // TODO: hash password func
-
-        return user;
-    }
 }
