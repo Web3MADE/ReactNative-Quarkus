@@ -61,9 +61,8 @@ public class UserService {
         userDTO.setUploadedVideos(
                 Optional.ofNullable(user.uploadedVideos).orElse(Collections.emptySet()).stream()
                         .map(VideoDTO::new).collect(Collectors.toSet()));
-        userDTO.setLikedVideos(
-                Optional.ofNullable(user.uploadedVideos).orElse(Collections.emptySet()).stream()
-                        .map(VideoDTO::new).collect(Collectors.toSet()));
+        userDTO.setLikedVideos(Optional.ofNullable(user.likedVideos).orElse(Collections.emptySet())
+                .stream().map(VideoDTO::new).collect(Collectors.toSet()));
 
         return userDTO;
     }
