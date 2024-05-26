@@ -67,6 +67,27 @@ public class UserServiceTest {
         });
     }
 
+    @RunOnVertxContext
+    @Test
+    void testFindByEmail(UniAsserter asserter) {
+        // arrange
+        String email = "test@test.com";
+        User user = new User();
+        user.id = 1L;
+        user.name = "test";
+        user.email = email;
+        user.password = "test";
+        // act
+        asserter.execute(() -> {
+            when(userRepo.findByEmail(email)).thenReturn(Uni.createFrom().item(user));
+            return Uni.createFrom().voidItem();
+        });
+
+        asserter.assertThat(() -> userService.findByEmail(email), userDTO -> {
+            userDTO.equals(new UserDTO(user));
+        });
+    }
+
     // Will need TransactionalUniAsserter for createUser test
 
 
