@@ -1,6 +1,8 @@
 package org.acme.services;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import org.acme.repositories.UserRepository;
 import org.acme.user.User;
@@ -45,9 +47,11 @@ public class UserService {
         userDTO.setEmail(user.email);
         userDTO.setPassword(user.password);
         userDTO.setUploadedVideos(
-                user.uploadedVideos.stream().map(VideoDTO::new).collect(Collectors.toSet()));
+                Optional.ofNullable(user.uploadedVideos).orElse(Collections.emptySet()).stream()
+                        .map(VideoDTO::new).collect(Collectors.toSet()));
         userDTO.setLikedVideos(
-                user.likedVideos.stream().map(VideoDTO::new).collect(Collectors.toSet()));
+                Optional.ofNullable(user.uploadedVideos).orElse(Collections.emptySet()).stream()
+                        .map(VideoDTO::new).collect(Collectors.toSet()));
 
         return userDTO;
     }
