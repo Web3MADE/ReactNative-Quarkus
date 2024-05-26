@@ -1,6 +1,7 @@
 package org.acme.repositories;
 
 import java.util.List;
+import org.acme.user.User;
 import org.acme.video.Video;
 import io.quarkus.hibernate.reactive.panache.PanacheRepository;
 import io.smallrye.mutiny.Uni;
@@ -15,6 +16,24 @@ public class VideoRepository implements PanacheRepository<Video> {
 
     public Uni<Video> getVideoById(Long id) {
         return Video.findById(id);
+    }
+
+    public Uni<List<Video>> searchByTitle(String title) {
+        return Video.list("title", title);
+    }
+
+    public Uni<Video> createVideo(String title, String url, String thumbnailUrl, User user) {
+        Video video = new Video();
+        video.title = title;
+        video.url = url;
+        video.thumbnailUrl = thumbnailUrl;
+        video.uploader = user;
+
+        return video.persist().onItem().transform(v -> video);
+    }
+
+    public Uni<Video> persistAndFlush(Video video) {
+        return video.persistAndFlush().onItem().transform(v -> video);
     }
 
 }

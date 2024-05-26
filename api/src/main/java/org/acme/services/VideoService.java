@@ -3,6 +3,7 @@ package org.acme.services;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.acme.repositories.VideoRepository;
+import org.acme.user.User;
 import org.acme.video.Video;
 import org.acme.video.VideoDTO;
 import io.smallrye.mutiny.Uni;
@@ -24,6 +25,14 @@ public class VideoService {
 
     public Uni<VideoDTO> getVideoById(Long id) {
         return videoRepo.getVideoById(id).map(this::mapVideoToVideoDTO);
+    }
+
+    public Uni<Video> createVideo(String title, String url, String thumbnailUrl, User user) {
+        return videoRepo.createVideo(title, url, thumbnailUrl, user);
+    }
+
+    public Uni<Video> persistAndFlush(Video video) {
+        return videoRepo.persistAndFlush(video);
     }
 
     private VideoDTO mapVideoToVideoDTO(Video video) {
