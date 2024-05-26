@@ -198,5 +198,22 @@ public class VideoServiceTest {
         });
     }
 
+    @RunOnVertxContext
+    @Test
+    void testLikeVideo(TransactionalUniAsserter asserter) {
+        // act
+        asserter.execute(() -> {
+            // arrange
+            when(userRepo.findById(user.id)).thenReturn(Uni.createFrom().item(user));
+            when(videoRepo.findById(video.id)).thenReturn(Uni.createFrom().item(video));
+            when(videoRepo.persistAndFlush(video)).thenReturn(Uni.createFrom().item(video));
+            return Uni.createFrom().voidItem();
+        });
+
+        asserter.assertThat(() -> videoService.likeVideo(video.id, user.id), likedVideo -> {
+            likedVideo.equals(new VideoDTO(video));
+        });
+    }
+
 
 }
