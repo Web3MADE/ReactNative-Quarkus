@@ -30,6 +30,12 @@
   <dependencies>
     <dependency>
         <groupId>io.quarkus</groupId>
+        <artifactId>quarkus-test-hibernate-reactive-panache</artifactId>
+        <version>3.3.3</version>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>io.quarkus</groupId>
         <artifactId>quarkus-test-vertx</artifactId>
         <version>3.11.0</version>
         <scope>test</scope>
