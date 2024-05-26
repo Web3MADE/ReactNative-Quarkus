@@ -78,4 +78,11 @@ public class UserDTO {
     public void setLikedVideos(Set<VideoDTO> likedVideos) {
         this.likedVideos = likedVideos;
     }
+
+    @Override
+    public String toString() {
+        return "UserDTO{" + "id=" + id + ", name='" + name + '\'' + ", email='" + email + '\''
+                + ", password='" + password + '\'' + ", uploadedVideos=" + uploadedVideos
+                + ", likedVideos=" + likedVideos + '}';
+    }
 }
