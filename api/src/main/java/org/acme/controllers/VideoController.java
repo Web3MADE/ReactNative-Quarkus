@@ -1,10 +1,13 @@
-package org.acme.video;
+package org.acme.controllers;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import org.acme.azure.BlobService;
+import org.acme.services.BlobService;
 import org.acme.user.User;
+import org.acme.video.LikeRequest;
+import org.acme.video.Video;
+import org.acme.video.VideoDTO;
 import org.jboss.resteasy.reactive.RestForm;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 import io.quarkus.hibernate.reactive.panache.Panache;
@@ -26,7 +29,7 @@ import jakarta.ws.rs.core.Response;
 @Path("/api/videos")
 @ApplicationScoped
 @Produces(MediaType.APPLICATION_JSON)
-public class VideoResouce {
+public class VideoController {
 
     // define custom class for FileUploadInput
     public static class FileUploadInput {

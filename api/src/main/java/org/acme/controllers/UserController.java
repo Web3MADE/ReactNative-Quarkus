@@ -1,9 +1,10 @@
-package org.acme.user;
+package org.acme.controllers;
 
 import java.util.List;
 import org.acme.security.GenerateToken;
 import org.acme.security.UserResponse;
 import org.acme.services.UserService;
+import org.acme.user.UserDTO;
 import io.quarkus.hibernate.reactive.panache.common.WithSession;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
@@ -27,7 +28,7 @@ import jakarta.ws.rs.core.Response;
 // TODOs:
 // add custom static queries to return User instead of generic PanacheEntity (findById returns a
 // User class that doesn't need casting in-code)
-public class UserResource {
+public class UserController {
 
     @Inject
     UserService userService;

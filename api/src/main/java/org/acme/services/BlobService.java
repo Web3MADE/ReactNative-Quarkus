@@ -1,4 +1,4 @@
-package org.acme.azure;
+package org.acme.services;
 
 import java.nio.file.Path;
 import com.azure.core.util.BinaryData;
