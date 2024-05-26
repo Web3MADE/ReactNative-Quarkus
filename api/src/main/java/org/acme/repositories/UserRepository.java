@@ -24,10 +24,7 @@ public class UserRepository implements PanacheRepository<User> {
         user.name = userDTO.getName();
         user.email = userDTO.getEmail();
         user.password = userDTO.getPassword();
-        user.persistAndFlush();
-
-        // TODO: return User instead of UserDTO
-        return Uni.createFrom().item(user);
+        return user.persist().onItem().transform(u -> user);
     }
 
     public Uni<User> findByEmail(String email) {

@@ -1,14 +1,12 @@
 package org.acme.user;
 
-import static jakarta.ws.rs.core.Response.Status.BAD_REQUEST;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.acme.security.GenerateToken;
 import org.acme.security.UserResponse;
-import org.hibernate.reactive.mutiny.Mutiny;
+import org.acme.services.UserService;
+import io.quarkus.hibernate.reactive.panache.common.WithSession;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
-import io.vertx.mutiny.core.Vertx;
 import jakarta.annotation.security.PermitAll;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -32,87 +30,79 @@ import jakarta.ws.rs.core.Response;
 public class UserResource {
 
     @Inject
-    Mutiny.SessionFactory sessionFactory;
-
-    @Inject
-    Vertx vertx;
+    UserService userService;
 
     @GET
     @PermitAll
+    @WithSession
     // @RolesAllowed("Admin") remove for dev purposes
     public Uni<List<UserDTO>> getAllUsers() {
-        return User.listAll().map(users -> users.stream().map(user -> new UserDTO((User) user))
-                .collect(Collectors.toList()));
+        return userService.getAllUsers();
     }
 
     @GET
     @Path("{id}")
     // @RolesAllowed({"User", "Admin"}) // only User or Admin role is authorized for this endpoint
     @PermitAll
+    @WithSession
     public Uni<Response> get(@PathParam("id") Long id) {
-        return User.findById(id).onItem().transform(user -> {
-            if (user == null) {
+        Uni<UserDTO> user = userService.getUserById(id);
+        return user.onItem().transform(userDTO -> {
+            if (userDTO == null) {
                 return Response.status(Response.Status.NOT_FOUND).build();
             } else {
-                UserDTO userDTO = new UserDTO((User) user);
                 return Response.ok(userDTO).build();
             }
         });
     }
 
-    // TODO: Make this endpoint open to allow anyone to create a user
     @POST
     @PermitAll
     @WithTransaction
-    // @Transactional // This annotation is required for transactional operations, such as database
-    // operations
-    public Uni<Response> createUser(User user) {
+    public Uni<Response> createUser(UserDTO user) {
         System.out.println(
                 "User: " + user.getName() + " " + user.getEmail() + " " + user.getPassword());
-        if (user.id != null) {
-            return Uni.createFrom().item(Response.status(BAD_REQUEST).build());
-        }
+        Uni<UserDTO> createdUser = userService.createUser(user);
 
-        return user.persist().onItem().transform(persistedUser -> {
+        return createdUser.onItem().transform(createdUserDTO -> {
             // Generate JWT Token
             String token = GenerateToken.generateJwtToken("https://example.com/issuer",
                     user.getEmail(), "User", "2001-07-13");
-            UserResponse userResponse = new UserResponse(token, user.id);
+            UserResponse userResponse = new UserResponse(token, user.getId());
             return Response.ok(userResponse).status(Response.Status.CREATED).build();
         });
     }
 
     @POST
     @Path("/login")
-    public Uni<Response> login(User user) {
+    @WithSession
+    public Uni<Response> login(UserDTO user) {
         System.out.println("User: " + user.getEmail() + " " + user.getPassword());
-        return User.find("email", user.getEmail()).firstResult().onItem()
-                .transformToUni(foundUser -> {
-                    if (foundUser == null) {
-                        System.out.println("No user found for email: " + user.getEmail()); // Debug
-                                                                                           // for no
-                                                                                           // user
-                        return Uni.createFrom()
-                                .item(Response.status(Response.Status.UNAUTHORIZED).build());
-                    }
+        Uni<UserDTO> foundUser = userService.findByEmail(user.getEmail());
 
-                    // Assuming passwords are stored in plain text for simplicity. In a real
-                    // application, passwords should be hashed and salted.
-                    User existingUser = (User) foundUser;
-                    if (!existingUser.getPassword().equals(user.getPassword())) {
-                        System.out.println("Incorrect password for email: " + user.getEmail()); // Debug
-                                                                                                // for
-                                                                                                // incorrect
-                                                                                                // password
-                        return Uni.createFrom()
-                                .item(Response.status(Response.Status.UNAUTHORIZED).build());
-                    }
+        return foundUser.onItem().transformToUni(userDTO -> {
+            if (userDTO == null) {
+                System.out.println("No user found for email: " + user.getEmail()); // Debug
+                                                                                   // for no
+                                                                                   // user
+                return Uni.createFrom().item(Response.status(Response.Status.UNAUTHORIZED).build());
+            }
 
-                    // Generate JWT Token
-                    String token = GenerateToken.generateJwtToken("https://example.com/issuer",
-                            user.getEmail(), "User", "2001-07-13");
-                    UserResponse userResponse = new UserResponse(token, existingUser.id);
-                    return Uni.createFrom().item(Response.ok(userResponse).build());
-                });
+            // Assuming passwords are stored in plain text for simplicity. In a real
+            // application, passwords should be hashed and salted.
+            if (!userDTO.getPassword().equals(user.getPassword())) {
+                System.out.println("Incorrect password for email: " + user.getEmail()); // Debug
+                                                                                        // for
+                                                                                        // incorrect
+                                                                                        // password
+                return Uni.createFrom().item(Response.status(Response.Status.UNAUTHORIZED).build());
+            }
+
+            // Generate JWT Token
+            String token = GenerateToken.generateJwtToken("https://example.com/issuer",
+                    user.getEmail(), "User", "2001-07-13");
+            UserResponse userResponse = new UserResponse(token, userDTO.getId());
+            return Uni.createFrom().item(Response.ok(userResponse).build());
+        });
     }
 }
