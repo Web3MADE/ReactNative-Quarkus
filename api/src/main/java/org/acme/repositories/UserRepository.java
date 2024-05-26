@@ -19,13 +19,15 @@ public class UserRepository implements PanacheRepository<User> {
         return User.findById(id).map(user -> ((User) user));
     }
 
-    public Uni<UserDTO> createUser(UserDTO userDTO) {
+    public Uni<User> createUser(UserDTO userDTO) {
         User user = new User();
         user.name = userDTO.getName();
         user.email = userDTO.getEmail();
         user.password = userDTO.getPassword();
-        user.persist();
-        return Uni.createFrom().item(new UserDTO(user));
+        user.persistAndFlush();
+
+        // TODO: return User instead of UserDTO
+        return Uni.createFrom().item(user);
     }
 
     public Uni<User> findByEmail(String email) {

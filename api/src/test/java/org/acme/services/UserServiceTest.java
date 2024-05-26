@@ -15,7 +15,6 @@ import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
 
 @QuarkusTest
-// TODO: clean up code
 public class UserServiceTest {
 
     @Inject
@@ -97,9 +96,14 @@ public class UserServiceTest {
         userDTO.setName("test");
         userDTO.setEmail("test@test.com");
         userDTO.setPassword("test");
+        User createdUser = new User();
+        createdUser.id = 1L;
+        createdUser.name = userDTO.getName();
+        createdUser.email = userDTO.getEmail();
+        createdUser.password = userDTO.getPassword();
         // act
         asserter.execute(() -> {
-            when(userRepo.createUser(userDTO)).thenReturn(Uni.createFrom().item(userDTO));
+            when(userRepo.createUser(userDTO)).thenReturn(Uni.createFrom().item(createdUser));
             return Uni.createFrom().voidItem();
         });
 

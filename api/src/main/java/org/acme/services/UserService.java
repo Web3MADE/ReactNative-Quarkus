@@ -33,7 +33,10 @@ public class UserService {
     }
 
     public Uni<UserDTO> createUser(UserDTO userDTO) {
-        return userRepo.createUser(userDTO);
+        if (userDTO.getId() != null) {
+            return null;
+        }
+        return userRepo.createUser(userDTO).map(this::mapUserToUserDTO);
     }
 
     private UserDTO mapUserToUserDTO(User user) {
