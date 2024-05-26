@@ -67,6 +67,28 @@ public class VideoService {
                 });
     }
 
+
+    public Uni<VideoDTO> likeVideo(Long videoId, Long userId) {
+        return Panache.withTransaction(
+                () -> userRepo.findById(userId).onItem().transformToUni(userObj -> {
+                    if (userObj == null) {
+                        return Uni.createFrom().nullItem();
+                    }
+                    User user = userObj;
+                    return videoRepo.findById(videoId).onItem().transformToUni(videoObj -> {
+                        if (videoObj == null) {
+                            return Uni.createFrom().nullItem();
+                        }
+                        Video video = videoObj;
+                        if (video.likedByUsers.add(user)) {
+                            video.likes += 1;
+                            user.likedVideos.add(video);
+                        }
+                        return video.persistAndFlush().replaceWith(new VideoDTO(video));
+                    });
+                }));
+    }
+
     private String generateFileName(String extension) {
         return UUID.randomUUID().toString() + extension;
     }

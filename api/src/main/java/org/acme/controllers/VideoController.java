@@ -5,12 +5,10 @@ import java.util.stream.Collectors;
 import org.acme.services.BlobService;
 import org.acme.services.UserService;
 import org.acme.services.VideoService;
-import org.acme.user.User;
 import org.acme.video.FileUploadInput;
 import org.acme.video.LikeRequest;
 import org.acme.video.Video;
 import org.acme.video.VideoDTO;
-import io.quarkus.hibernate.reactive.panache.Panache;
 import io.quarkus.hibernate.reactive.panache.common.WithSession;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
@@ -107,30 +105,10 @@ public class VideoController {
     @Consumes(MediaType.APPLICATION_JSON)
     public Uni<Response> likeVideo(@PathParam("videoId") Long videoId, LikeRequest request) {
         Long userId = request.userId;
-
-        return Panache
-                .withTransaction(() -> User.findById(userId).onItem().transformToUni(userObj -> {
-                    if (userObj == null) {
-                        return Uni.createFrom().item(Response.status(Response.Status.NOT_FOUND)
-                                .entity("User not found").build());
-                    }
-                    return Video.findById(videoId).onItem().transformToUni(videoObj -> {
-                        User user = (User) userObj;
-                        Video video = (Video) videoObj;
-
-                        if (video == null) {
-                            // LOGGER.errorf("Video with ID %d not found", videoId);
-                            return Uni.createFrom().item(Response.status(Response.Status.NOT_FOUND)
-                                    .entity("Video not found").build());
-                        }
-                        if (video.likedByUsers.add(user)) {
-                            video.likes += 1;
-                            user.likedVideos.add(video);
-                        }
-                        return video.persistAndFlush()
-                                .replaceWith(Response.ok(new VideoDTO((Video) video)).build());
-                    });
-                }));
+        return videoService.likeVideo(videoId, userId)
+                .map(videoDTO -> Response.ok(videoDTO).build()).onFailure()
+                .recoverWithItem(th -> Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .entity(th.getMessage()).build());
     }
 
 
