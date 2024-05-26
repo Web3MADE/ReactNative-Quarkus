@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.acme.services.BlobService;
+import org.acme.services.UserService;
+import org.acme.services.VideoService;
 import org.acme.user.User;
 import org.acme.video.LikeRequest;
 import org.acme.video.Video;
@@ -11,6 +13,7 @@ import org.acme.video.VideoDTO;
 import org.jboss.resteasy.reactive.RestForm;
 import org.jboss.resteasy.reactive.multipart.FileUpload;
 import io.quarkus.hibernate.reactive.panache.Panache;
+import io.quarkus.hibernate.reactive.panache.common.WithSession;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
 import jakarta.annotation.security.PermitAll;
@@ -50,43 +53,49 @@ public class VideoController {
     }
 
     @Inject
+    VideoService videoService;
+
+    @Inject
+    UserService userService;
+
+    @Inject
     BlobService blobService;
 
     @GET
     @PermitAll
+    /**
+     * @dev This WithSession indicates a session for reactive thread - had random issue earlier with
+     *      this so placing on all endpoints
+     */
+    @WithSession
     public Uni<List<VideoDTO>> getAllVideos() {
-        return Video.listAll().map(videos -> videos.stream()
-                .map(video -> new VideoDTO((Video) video)).collect(Collectors.toList()));
+        return videoService.getAllVideos();
     }
 
     @GET
     @PermitAll
     @Path("/uploader/{id}")
+    @WithSession
     public Uni<List<VideoDTO>> getVideosByUploader(@PathParam("id") Long id) {
-        return Video.find("uploader.id", id).list().map(videos -> videos.stream()
-                .map(video -> new VideoDTO((Video) video)).collect(Collectors.toList()));
+        return videoService.getVideosByUploader(id);
     }
 
     @GET
     @Path("{id}")
     @PermitAll
+    @WithSession
     public Uni<Response> getVideoById(@PathParam("id") Long id) {
-        return Video.findById(id).onItem().ifNotNull()
-                .transform(video -> Response.ok(new VideoDTO((Video) video)).build()).onItem()
-                .ifNull().continueWith(Response.status(Response.Status.NOT_FOUND).build());
+        return videoService.getVideoById(id).onItem().ifNotNull()
+                .transform(video -> Response.ok(video).build()).onItem().ifNull()
+                .continueWith(Response.status(Response.Status.NOT_FOUND).build());
     }
 
     @GET
     @Path("/liked/{id}")
     @PermitAll
     public Uni<List<VideoDTO>> getLikedVideosByUser(@PathParam("id") Long id) {
-        return User.findById(id).onItem().ifNotNull().transformToUni(userObj -> {
-            // fetch user from DB and typecast to User (will clean up in refactor)
-            User user = (User) userObj;
-            // map liked videos to VideoDTOs & return as list
-            List<VideoDTO> likedVids = user.likedVideos.stream().map(video -> new VideoDTO(video))
-                    .collect(Collectors.toList());
-            // create Uni from list of VideoDTOs
+        return userService.getUserById(id).onItem().ifNotNull().transformToUni(user -> {
+            List<VideoDTO> likedVids = userService.getLikedVideosByUser(user);
             return Uni.createFrom().item(likedVids);
         });
     }
