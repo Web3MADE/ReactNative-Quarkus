@@ -24,9 +24,9 @@ CREATE TABLE user_liked_videos (
     FOREIGN KEY (video_id) REFERENCES videos(id)
 );
 
--- Insert mock data for users
-INSERT INTO users (id, name, email) VALUES (1, 'Alice', 'alice@example.com');
-INSERT INTO users (id, name, email) VALUES (2, 'Bob', 'bob@example.com');
+-- -- Insert mock data for users
+-- INSERT INTO users (id, name, email) VALUES (1, 'Alice', 'alice@example.com');
+-- INSERT INTO users (id, name, email) VALUES (2, 'Bob', 'bob@example.com');
 
 -- -- Insert mock data for videos
 -- INSERT INTO videos (title, url, thumbnailUrl, likes, uploader_id) VALUES ('Video 1', '/uploads/mockMp4.mp4', '/uploads/twooptions.jpeg', 10, 1);
