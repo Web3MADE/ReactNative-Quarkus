@@ -8,7 +8,6 @@ import org.acme.controllers.VideoController.FileUploadInput;
 import org.acme.repositories.UserRepository;
 import org.acme.repositories.VideoRepository;
 import org.acme.user.User;
-import org.acme.user.UserDTO;
 import org.acme.utils.Constants;
 import org.acme.video.Video;
 import org.acme.video.VideoDTO;
@@ -55,9 +54,6 @@ public class VideoService {
         return videoRepo.persistAndFlush(video);
     }
 
-    // 1. getUserById(input.uploaderId)
-    // 2. uploadFiles (input.video, input.thumbnail, title)
-    // 3. saveVideo(user, title, urls[0], urls[1])
     public Uni<VideoDTO> uploadVideo(FileUploadInput input) {
         Uni<User> userUni = userRepo.getUserById(input.uploaderId);
         Uni<String[]> urlsUni = uploadFiles(input);
@@ -111,40 +107,6 @@ public class VideoService {
         videoDTO.setLikes(video.likes);
 
         return videoDTO;
-    }
-
-    private Video mapVideoDTOtoVideo(VideoDTO videoDTO) {
-        if (videoDTO == null) {
-            return null;
-        }
-
-        Video video = new Video();
-        video.id = videoDTO.getId();
-        video.title = videoDTO.getTitle();
-        video.url = videoDTO.getUrl();
-        video.thumbnailUrl = videoDTO.getThumbnailUrl();
-        video.likes = videoDTO.getLikes();
-
-        return video;
-    }
-
-    // TODO: handle DTO/BO stuff later
-    private User mapUserDTOtoUser(UserDTO userDTO) {
-        if (userDTO == null) {
-            return null;
-        }
-
-        User user = new User();
-        user.id = userDTO.getId();
-        user.name = userDTO.getName();
-        user.email = userDTO.getEmail();
-        user.password = userDTO.getPassword(); // TODO: hash password func
-        user.uploadedVideos = userDTO.getUploadedVideos().stream().map(this::mapVideoDTOtoVideo)
-                .collect(Collectors.toSet());
-        user.uploadedVideos = userDTO.getUploadedVideos().stream().map(this::mapVideoDTOtoVideo)
-                .collect(Collectors.toSet());
-
-        return user;
     }
 
 }
