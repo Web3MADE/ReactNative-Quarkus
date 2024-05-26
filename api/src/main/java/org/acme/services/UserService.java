@@ -28,12 +28,12 @@ public class UserService {
         return userRepo.getUserById(id).map(this::mapUserToUserDTO);
     }
 
-    public Uni<UserDTO> createUser(UserDTO userDTO) {
-        return userRepo.createUser(userDTO);
-    }
-
     public Uni<UserDTO> findByEmail(String email) {
         return userRepo.findByEmail(email).map(this::mapUserToUserDTO);
+    }
+
+    public Uni<UserDTO> createUser(UserDTO userDTO) {
+        return userRepo.createUser(userDTO);
     }
 
     private UserDTO mapUserToUserDTO(User user) {
