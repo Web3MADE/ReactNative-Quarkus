@@ -4,6 +4,7 @@ package org.acme.services;
 import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Set;
+import org.acme.repositories.UserRepository;
 import org.acme.repositories.VideoRepository;
 import org.acme.user.User;
 import org.acme.video.Video;
@@ -26,6 +27,9 @@ public class VideoServiceTest {
 
     @InjectMock
     VideoRepository videoRepo;
+
+    @InjectMock
+    UserRepository userRepo;
 
     private User user;
     private Video video;
@@ -93,6 +97,22 @@ public class VideoServiceTest {
         asserter.execute(() -> {
             when(videoRepo.getVideosByUploader(id))
                     .thenReturn(Uni.createFrom().item(List.of(video)));
+            return Uni.createFrom().voidItem();
+        });
+
+        asserter.assertThat(() -> videoService.getVideosByUploader(id), videoDTOs -> {
+            videoDTOs.equals(List.of(new VideoDTO(video)));
+        });
+    }
+
+    @RunOnVertxContext
+    @Test
+    void getLikedVideosByUser(UniAsserter asserter) {
+        // arrange
+        Long id = user.id;
+        // act
+        asserter.execute(() -> {
+            when(userRepo.getUserById(id)).thenReturn(Uni.createFrom().item(user));
             return Uni.createFrom().voidItem();
         });
 

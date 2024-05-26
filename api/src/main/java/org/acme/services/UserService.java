@@ -32,6 +32,15 @@ public class UserService {
         return userRepo.findByEmail(email).map(this::mapUserToUserDTO);
     }
 
+    public List<VideoDTO> getLikedVideosByUser(UserDTO user) {
+        if (user == null) {
+            return null;
+        }
+
+        List<VideoDTO> likedVideos = user.getLikedVideos().stream().collect(Collectors.toList());
+        return likedVideos;
+    }
+
     public Uni<User> createUser(UserDTO userDTO) {
         if (userDTO.getId() != null) {
             return null;
