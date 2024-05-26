@@ -1,14 +1,20 @@
 package org.acme.services;
 
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 import org.acme.repositories.UserRepository;
 import org.acme.repositories.VideoRepository;
 import org.acme.user.User;
+import org.acme.video.FileUploadInput;
 import org.acme.video.Video;
 import org.acme.video.VideoDTO;
+import org.jboss.resteasy.reactive.multipart.FileUpload;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import io.quarkus.test.InjectMock;
@@ -26,10 +32,19 @@ public class VideoServiceTest {
     VideoService videoService;
 
     @InjectMock
+    BlobService blobService;
+
+    @InjectMock
     VideoRepository videoRepo;
 
     @InjectMock
     UserRepository userRepo;
+
+    @org.mockito.Mock
+    private FileUploadInput fileUploadInput;
+
+    @org.mockito.Mock
+    private FileUpload fileUpload;
 
     private User user;
     private Video video;
@@ -152,6 +167,34 @@ public class VideoServiceTest {
 
         asserter.assertThat(() -> videoService.persistAndFlush(video), persistedVideo -> {
             persistedVideo.equals(video);
+        });
+    }
+
+    @RunOnVertxContext
+    @Test
+    void testUploadVideo(TransactionalUniAsserter asserter) {
+        // act
+        asserter.execute(() -> {
+            // arrange
+            // mock fileUploadInput methods
+            when(fileUploadInput.title).thenReturn("test");
+            when(fileUploadInput.video).thenReturn(fileUpload);
+            when(fileUploadInput.thumbnail).thenReturn(fileUpload);
+            when(fileUploadInput.uploaderId).thenReturn(user.id);
+            when(fileUpload.uploadedFile()).thenReturn(Paths.get("path/to/video.mp4"));
+            // Mock userRepo and blobService methods
+            when(userRepo.getUserById(user.id)).thenReturn(Uni.createFrom().item(user));
+            when(blobService.uploadFiles(anyString(), anyString(), anyString(), any(Path.class),
+                    any(Path.class))).thenReturn(
+                            Uni.createFrom().item(new String[] {"videoUrl", "thumbnailUrl"}));
+            // mock saveVideo method
+            when(videoRepo.createVideo(anyString(), anyString(), anyString(), any(User.class)))
+                    .thenReturn(Uni.createFrom().item(video));
+            return Uni.createFrom().voidItem();
+        });
+
+        asserter.assertThat(() -> videoService.uploadVideo(fileUploadInput), createdVideo -> {
+            createdVideo.equals(new VideoDTO(video));
         });
     }
 
