@@ -108,7 +108,7 @@ public class UserServiceTest {
         });
 
         asserter.assertThat(() -> userService.createUser(userDTO), res -> {
-            res.equals(userDTO);
+            res.equals(createdUser);
         });
     }
 

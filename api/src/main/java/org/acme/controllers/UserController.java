@@ -4,6 +4,7 @@ import java.util.List;
 import org.acme.security.GenerateToken;
 import org.acme.security.UserResponse;
 import org.acme.services.UserService;
+import org.acme.user.User;
 import org.acme.user.UserDTO;
 import io.quarkus.hibernate.reactive.panache.common.WithSession;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
@@ -63,13 +64,13 @@ public class UserController {
     public Uni<Response> createUser(UserDTO user) {
         System.out.println(
                 "User: " + user.getName() + " " + user.getEmail() + " " + user.getPassword());
-        Uni<UserDTO> createdUser = userService.createUser(user);
+        Uni<User> createdUser = userService.createUser(user);
 
-        return createdUser.onItem().transform(createdUserDTO -> {
+        return createdUser.onItem().transform(u -> {
             // Generate JWT Token
             String token = GenerateToken.generateJwtToken("https://example.com/issuer",
                     user.getEmail(), "User", "2001-07-13");
-            UserResponse userResponse = new UserResponse(token, user.getId());
+            UserResponse userResponse = new UserResponse(token, u.id);
             return Response.ok(userResponse).status(Response.Status.CREATED).build();
         });
     }

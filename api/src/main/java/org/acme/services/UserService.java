@@ -32,11 +32,11 @@ public class UserService {
         return userRepo.findByEmail(email).map(this::mapUserToUserDTO);
     }
 
-    public Uni<UserDTO> createUser(UserDTO userDTO) {
+    public Uni<User> createUser(UserDTO userDTO) {
         if (userDTO.getId() != null) {
             return null;
         }
-        return userRepo.createUser(userDTO).map(this::mapUserToUserDTO);
+        return userRepo.createUser(userDTO);
     }
 
     private UserDTO mapUserToUserDTO(User user) {
