@@ -14,6 +14,7 @@ import io.smallrye.mutiny.Uni;
 import jakarta.inject.Inject;
 
 @QuarkusTest
+// TODO: clean up code
 public class UserServiceTest {
 
     @Inject
@@ -36,11 +37,33 @@ public class UserServiceTest {
         asserter.execute(() -> {
             // Mock the repository method inside the execute block
             when(userRepo.getAllUsers()).thenReturn(Uni.createFrom().item(users));
+            // Return a Uni<Void> to indicate the test is done
             return Uni.createFrom().voidItem();
         });
         // assert
         asserter.assertThat(() -> userService.getAllUsers(), userDTOs -> {
             userDTOs.equals(List.of(new UserDTO(user)));
+        });
+    }
+
+    @RunOnVertxContext
+    @Test
+    void testGetUserById(UniAsserter asserter) {
+        // arrange
+        Long id = 1L;
+        User user = new User();
+        user.id = id;
+        user.name = "test";
+        user.email = "test@test.com";
+        user.password = "test";
+        // act
+        asserter.execute(() -> {
+            when(userRepo.getUserById(id)).thenReturn(Uni.createFrom().item(user));
+            return Uni.createFrom().voidItem();
+        });
+
+        asserter.assertThat(() -> userService.getUserById(id), userDTO -> {
+            userDTO.equals(new UserDTO(user));
         });
     }
 
