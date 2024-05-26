@@ -7,6 +7,7 @@ import org.acme.user.User;
 import org.acme.user.UserDTO;
 import org.junit.jupiter.api.Test;
 import io.quarkus.test.InjectMock;
+import io.quarkus.test.hibernate.reactive.panache.TransactionalUniAsserter;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.vertx.RunOnVertxContext;
 import io.quarkus.test.vertx.UniAsserter;
@@ -87,6 +88,27 @@ public class UserServiceTest {
             userDTO.equals(new UserDTO(user));
         });
     }
+
+    @RunOnVertxContext
+    @Test
+    void testCreateUser(TransactionalUniAsserter asserter) {
+        // arrange
+        UserDTO userDTO = new UserDTO();
+        userDTO.setName("test");
+        userDTO.setEmail("test@test.com");
+        userDTO.setPassword("test");
+        // act
+        asserter.execute(() -> {
+            when(userRepo.createUser(userDTO)).thenReturn(Uni.createFrom().item(userDTO));
+            return Uni.createFrom().voidItem();
+        });
+
+        asserter.assertThat(() -> userService.createUser(userDTO), res -> {
+            res.equals(userDTO);
+        });
+    }
+
+
 
     // Will need TransactionalUniAsserter for createUser test
 
