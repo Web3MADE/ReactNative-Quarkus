@@ -1,77 +1,57 @@
-# code-with-quarkus
+# LearnReactNative API
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+This is the API for the React Native app, which handles authenticated routes & file uploads.
 
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+The purpose of this project is to better understand how React Native & Quarkus operate.
 
-## Running the application in dev mode
+## Table of Contents
 
-You can run your application in dev mode that enables live coding using:
+- [Getting Started](#getting-started)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Usage](#usage)
+- [API Endpoints](#api-endpoints)
+- [Request and Response Examples](#request-and-response-examples)
+- [Authentication](#authentication)
+- [Error Handling](#error-handling)
+- [Testing](#testing)
 
-```shell script
-./mvnw compile quarkus:dev
+## Getting Started
+Instructions on how to get a copy of the project up and running on your local machine for development and testing purposes.
+
+### Prerequisites
+
+List of software and tools that are required to set up the project.
+
+- **Java 17+**
+- **Maven**: 3+ For building the project. Run `mvn -v` to check your version.
+- **quarkus-CLI**: If you want a slightly better dev experience.
+- **Docker**: If you are using Docker for database or other services, ensure Docker is installed and running.
+- **Postgres**: (if you want Docker)
+
+### Installation
+
+1. Clone the repository at `https://github.com/Web3MADE/ReactNative-Quarkus.git` and `cd LearnReactNative`
+2. navigate to `/api` and run `quarkus dev` or `mvn quarkus:dev`to start the api
+
+## Usage
+
+First step is to create a user. This will be saved to a postgres instance that is spun up by Quarkus - so you do not need to manage any docker containers.
+
+```
+{
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "password": "password123"
+}
 ```
 
-> **_NOTE:_** Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
+Then post the user from the REST API client of your choice, the example below uses curl.
 
-## Packaging and running the application
-
-The application can be packaged using:
-
-```shell script
-./mvnw package
-```
-
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
-
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
-
-```shell script
-./mvnw package -Dquarkus.package.jar.type=uber-jar
-```
-
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using:
-
-```shell script
-./mvnw package -Dnative
-```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
-
-```shell script
-./mvnw package -Dnative -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./target/code-with-quarkus-1.0.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.
-
-## Provided Code
-
-### REST
-
-Easily start your REST Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
-
-## Access Dev mode's Postgres (preferred)
-
-`psql -h localhost -p 61307 -U quarkus -d quarkus`
-
-Note: the port may change dynamically, confirm the details at `http://localhost:8080/q/dev-ui/configuration-form-editor?filter=quarkus.datasource.`
-Note: The username is quarkus, even though it's empty in the dev-ui config.
-
-## Setup Postgres (optional)
-
-docker run -it --rm=true --name quarkus_test -e POSTGRES_USER=quarkus_test -e POSTGRES_PASSWORD=quarkus_test -e POSTGRES_DB=quarkus_test -p 5432:5432 postgres:13.3
-
-## Dev notes
-
-- Currently set to drop-and-create for DB, which wipes DB on every saved file in API. This can be annoying if unaware, but great for dev UX.
+curl -X POST http://localhost:8080/api/users \
+-H 'Content-Type: application/json' \
+-d '{
+"name": "John Doe",
+"email": "john.doe@example.com",
+"password": "password123"
+}'
