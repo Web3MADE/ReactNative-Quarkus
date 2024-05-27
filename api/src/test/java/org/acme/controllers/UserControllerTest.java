@@ -3,7 +3,6 @@ package org.acme.controllers;
 import static io.restassured.RestAssured.given;
 import static org.mockito.Mockito.when;
 import java.util.List;
-import org.acme.services.JwtTokenService;
 import org.acme.services.UserService;
 import org.acme.user.User;
 import org.acme.user.UserDTO;
@@ -23,9 +22,6 @@ public class UserControllerTest {
 
     @InjectMock
     UserService userService;
-
-    @InjectMock
-    JwtTokenService jwtTokenService;
 
     private User user;
     private UserDTO userDTO;
@@ -56,27 +52,21 @@ public class UserControllerTest {
         given().when().get().then().statusCode(200);
         Mockito.verify(userService, Mockito.times(1)).getAllUsers();
     }
-    // TODO: refactor createUser and Login UserController endpoints
+
     // @RunOnVertxContext
     // @Test
+    // TODO: userResponse is null for some reason?
     // void testCreateUser(TransactionalUniAsserter asserter) {
-    // String mockIssuer = "mockIssuer";
-    // Role mockRole = Constants.Role.USER;
-    // String mockUpn = "mockUpn";
-    // String mockBirthdate = "mockBirthdate";
-
-    // System.out.println("User role name " + mockRole.name());
+    // UserResponse userResponse = new UserResponse("token", user.id);
+    // when(userService.createUser(userDTO)).thenReturn(Uni.createFrom().item(userResponse));
 
     // asserter.execute(() -> {
-    // when(userService.createUser(userDTO)).thenReturn(Uni.createFrom().item(user));
-    // when(jwtTokenService.generateJwtToken(mockIssuer, mockUpn, mockRole, mockBirthdate))
-    // .thenReturn("token");
+    // when(userService.createUser(userDTO)).thenReturn(Uni.createFrom().item(userResponse));
     // return Uni.createFrom().voidItem();
     // });
     // given().contentType("application/json").body(userDTO).when().post().then().statusCode(201);
     // Mockito.verify(userService, Mockito.times(1)).createUser(userDTO);
-    // Mockito.verify(jwtTokenService, Mockito.times(1)).generateJwtToken(mockIssuer, mockUpn,
-    // mockRole, mockBirthdate);
+
     // }
 
 
