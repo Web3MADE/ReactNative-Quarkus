@@ -107,7 +107,8 @@ public class UserServiceTest {
         createdUser.name = userDTO.getName();
         createdUser.email = userDTO.getEmail();
         createdUser.password = userDTO.getPassword();
-        UserResponse userResponse = new UserResponse("token", createdUser.id);
+        UserResponse userResponse =
+                new UserResponse("token", createdUser.id, createdUser.name, createdUser.email);
         // mock generateJwtToken params
         String mockIssuer = "mockIssuer";
         Role mockRole = Constants.Role.USER;
