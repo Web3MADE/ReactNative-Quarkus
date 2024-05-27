@@ -10,7 +10,6 @@ The purpose of this project is to better understand how React Native & Quarkus o
 - [Installation](#installation)
 - [Usage](#usage)
 - [API Endpoints](#api-endpoints)
-- [Request and Response Examples](#request-and-response-examples)
 - [Authentication](#authentication)
 - [Error Handling](#error-handling)
 - [Testing](#testing)
@@ -29,6 +28,8 @@ List of software and tools that are required to set up the project.
 
 1. Clone the repository at `https://github.com/Web3MADE/ReactNative-Quarkus.git` and `cd LearnReactNative`
 2. navigate to `/api` and run `quarkus dev` or `mvn quarkus:dev` to start the api
+
+The api will now be running on port 8080 at `http://localhost:8080`, unless you have changed it.
 
 ## Usage
 
@@ -66,3 +67,29 @@ Your response should look contain a JWT token and the userId:
 ```
 
 From here on, you may pass the JWT token to the authenticated endpoints, the one's annotated with `@RolesAllowed({ "User" })`
+
+You can get the user you just created by calling the `getUserById` endpoint. Simply pass the userId and a valid JWT token.
+
+```
+curl -X GET http://localhost:8080/api/users/1 \
+-H 'Content-Type: application/json' \
+-d '{
+"userId": 1,
+"token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJodHRwczovL2V4YW1wbGUuY29tL2lzc3VlciIsInVwbiI6ImpvaG4uZG9lQGV4YW1wbGUuY29tIiwiZ3JvdXBzIjpbIlVzZXIiXSwiYmlydGhkYXRlIjoiMjAwMS0wNy0xMyIsImlhdCI6MTcxNjc5NTA1NSwiZXhwIjoxNzE2Nzk1MzU1LCJqdGkiOiJkZjQ2MTAwNi1hMWY0LTQyNDQtOTc1My0yNGE1NTZkZjlkYmYifQ.QkcohRIDKz_9OKNHisydrxLtzXM5q-Ha0789zrvFpcvRThLTRnpZCqr6Sy46QW3uVrcLmaZym7CttGokckL6W9AEA2N3ltiV0tqQO_erL_gbruTlLmrMTk0jCrfxRuM1_nY_GtHZWKKzIvlp-AcG2HoXfMVBXKnommvKOg3GQdFLQzwt05uKvUj0ru-atc633RysGrqegnnakYv_nXuap-d1BToIoyDyP3q2xujXiNTcUL41lCqINODL-26FZmgHAnp1lGSsnHhlySPGKNgrKSwSZS1213nfDbxYGkXn2XM_wnTGAgX68Hcnvk_MB-tgnLOpaLki2YztoI4l1VL8gw"
+}'
+```
+
+Your response should look like this:
+
+```
+{
+  "id": 1,
+  "name": "John Doe",
+  "email": "john.doe@example.com",
+  "password": "password123",
+  "uploadedVideos": [],
+  "likedVideos": []
+}
+```
+
+## API Endpoints
