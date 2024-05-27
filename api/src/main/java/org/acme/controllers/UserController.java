@@ -47,7 +47,7 @@ public class UserController {
     // @RolesAllowed({"User", "Admin"}) // only User or Admin role is authorized for this endpoint
     @PermitAll
     @WithSession
-    public Uni<Response> get(@PathParam("id") Long id) {
+    public Uni<Response> getById(@PathParam("id") Long id) {
         Uni<UserDTO> user = userService.getUserById(id);
 
         return user.onItem().transform(userDTO -> {
