@@ -56,7 +56,7 @@ public class UserService {
             // Generate JWT Token
             String token = jwtTokenService.generateJwtToken(Constants.JWT_ISSUER_URL,
                     user.getEmail(), Constants.Role.USER, Constants.JWT_BIRTHDATE);
-            UserResponse userResponse = new UserResponse(token, user.id);
+            UserResponse userResponse = new UserResponse(token, user.id, user.name, user.email);
             return userResponse;
         });
 

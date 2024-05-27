@@ -102,7 +102,8 @@ public class UserController {
             // Generate JWT Token
             String token = jwtTokenService.generateJwtToken(Constants.JWT_ISSUER_URL,
                     user.getEmail(), Constants.Role.USER, Constants.JWT_BIRTHDATE);
-            UserResponse userResponse = new UserResponse(token, userDTO.getId());
+            UserResponse userResponse =
+                    new UserResponse(token, userDTO.getId(), userDTO.getName(), userDTO.getEmail());
             return Uni.createFrom().item(Response.ok(userResponse).build());
         });
     }
