@@ -1,11 +1,11 @@
 package org.acme.controllers;
 
 import java.util.List;
-import org.acme.security.GenerateToken;
-import org.acme.security.UserResponse;
+import org.acme.services.JwtTokenService;
 import org.acme.services.UserService;
 import org.acme.user.User;
 import org.acme.user.UserDTO;
+import org.acme.user.UserResponse;
 import io.quarkus.hibernate.reactive.panache.common.WithSession;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
@@ -26,13 +26,13 @@ import jakarta.ws.rs.core.Response;
 @ApplicationScoped
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-// TODOs:
-// add custom static queries to return User instead of generic PanacheEntity (findById returns a
-// User class that doesn't need casting in-code)
 public class UserController {
 
     @Inject
     UserService userService;
+
+    @Inject
+    JwtTokenService jwtTokenService;
 
     @GET
     @PermitAll
@@ -68,7 +68,7 @@ public class UserController {
 
         return createdUser.onItem().transform(u -> {
             // Generate JWT Token
-            String token = GenerateToken.generateJwtToken("https://example.com/issuer",
+            String token = jwtTokenService.generateJwtToken("https://example.com/issuer",
                     user.getEmail(), "User", "2001-07-13");
             UserResponse userResponse = new UserResponse(token, u.id);
             return Response.ok(userResponse).status(Response.Status.CREATED).build();
@@ -101,7 +101,7 @@ public class UserController {
             }
 
             // Generate JWT Token
-            String token = GenerateToken.generateJwtToken("https://example.com/issuer",
+            String token = jwtTokenService.generateJwtToken("https://example.com/issuer",
                     user.getEmail(), "User", "2001-07-13");
             UserResponse userResponse = new UserResponse(token, userDTO.getId());
             return Uni.createFrom().item(Response.ok(userResponse).build());

@@ -1,29 +1,28 @@
-package org.acme.security;
+package org.acme.services;
 
 import java.util.HashSet;
 import java.util.Set;
 import org.eclipse.microprofile.jwt.Claims;
 import io.smallrye.jwt.build.Jwt;
+import jakarta.enterprise.context.ApplicationScoped;
 
-public class GenerateToken {
-        public static String generateJwtToken(String issuer, String upn, String role, String birthdate) {
+@ApplicationScoped
+public class JwtTokenService {
+    public String generateJwtToken(String issuer, String upn, String role, String birthdate) {
         Set<String> groups = determineGroups(role);
 
-        String token = Jwt.issuer(issuer)
-                          .upn(upn)
-                          .groups(groups)
-                          .claim(Claims.birthdate.name(), birthdate)
-                          .sign();
+        String token = Jwt.issuer(issuer).upn(upn).groups(groups)
+                .claim(Claims.birthdate.name(), birthdate).sign();
         System.out.println("Generated JWT: " + token);
-            return token;
+        return token;
 
     }
 
-    private static Set<String> determineGroups(String role) {
+    private Set<String> determineGroups(String role) {
         Set<String> groups = new HashSet<>();
         // Add basic "User" role to everyone, modify as needed
         groups.add("User");
-        
+
         // Additional roles based on input
         switch (role.toUpperCase()) {
             case "ADMIN":

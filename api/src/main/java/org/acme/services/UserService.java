@@ -12,7 +12,6 @@ import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 
-// TODO: Do some BO refactoring
 @ApplicationScoped
 public class UserService {
 

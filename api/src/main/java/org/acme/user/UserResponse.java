@@ -1,4 +1,4 @@
-package org.acme.security;
+package org.acme.user;
 
 public class UserResponse {
     private String token;

@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
+import io.quarkus.test.hibernate.reactive.panache.TransactionalUniAsserter;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.vertx.RunOnVertxContext;
 import io.quarkus.test.vertx.UniAsserter;
@@ -49,6 +50,18 @@ public class UserControllerTest {
         });
         given().when().get().then().statusCode(200);
         Mockito.verify(userService, Mockito.times(1)).getAllUsers();
+    }
+
+    @RunOnVertxContext
+    @Test
+    // TODO: create jwtTokenService for DI
+    void testCreateUser(TransactionalUniAsserter asserter) {
+        asserter.execute(() -> {
+            when(userService.createUser(userDTO)).thenReturn(Uni.createFrom().item(user));
+            return Uni.createFrom().voidItem();
+        });
+        given().when().post().then().statusCode(201);
+        Mockito.verify(userService, Mockito.times(1)).createUser(userDTO);
     }
 
 
