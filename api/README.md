@@ -6,6 +6,16 @@ The purpose of this project is to better understand how React Native & Quarkus o
 
 **Note**: Currently, all endpoints are unauthenticated for development purposes. Just uncomment out the `@RolesAllowed` code to re-authenticate them.
 
+## Hibernate Reactive with Panache
+
+The API uses Hibernate Reactive with Panache, an extension of Hibernate ORM that works with reactive, non-blocking code.
+
+So, why use non-blocking IO?
+
+Traditional Hibernate ORM operations are reliant on database operations to complete, thus becoming very inefficient/slow at high, simultaneous requests.
+
+A non-blocking IO allows for high-concurrency where many users can interact simultaneusly.
+
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
@@ -142,9 +152,11 @@ The `VideoController` handles all API requests regarding uploaded videos, includ
 
 ## Services
 
+There are four services used in this API. Each are explained below.
+
 ### UserService
 
-- brief summary
+This service is responsible
 
 ### VideoService
 
