@@ -2,6 +2,8 @@
 
 A React Native application for uploading Images and videos (similar to Instagram).
 
+**IMPORTANT NOTE**: This project has been abandoned, as I am switching to React Native CLI instead of Expo.
+
 ## Tech Stack
 
 - Quarkus API (Reactive programming for User Auth and Transactional logic)
@@ -14,11 +16,6 @@ A React Native application for uploading Images and videos (similar to Instagram
 - Make sure the debugger can be opened, else restart the server and clear expo cache with `npm run start`
 - Videos are removed due to being too large to push
 - Run postgres locally with this command `docker run -it --rm=true --name quarkus_test -e POSTGRES_USER=quarkus_test -e POSTGRES_PASSWORD=quarkus_test -e POSTGRES_DB=quarkus_test -p 5432:5432 postgres:13.3` or cd to `/api` and run `docker-compose up -d`
-
-## TODOs
-
-- Add endpoint to upload videos
-- Add endpoint to search and get videos
 
 ## Screenshots
 
