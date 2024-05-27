@@ -40,8 +40,6 @@ const zoomOut = {
 
 const TrendingItem = ({ activeItem, item }: ITrendingItemProps) => {
   const [play, setPlay] = useState(false);
-  console.log("Active item ", activeItem);
-  console.log("Item ", item);
   // animate the active item to zoom in and out when active
   return (
     <Animatable.View
