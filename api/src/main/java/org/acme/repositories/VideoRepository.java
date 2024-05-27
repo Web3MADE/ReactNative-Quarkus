@@ -11,15 +11,15 @@ import jakarta.enterprise.context.ApplicationScoped;
 public class VideoRepository implements PanacheRepository<Video> {
 
     public Uni<List<Video>> getAllVideos() {
-        return Video.listAll();
+        return listAll();
     }
 
     public Uni<Video> getVideoById(Long id) {
-        return Video.findById(id);
+        return findById(id);
     }
 
     public Uni<List<Video>> getVideosByUploader(Long id) {
-        return Video.list("uploader.id", id);
+        return list("uploader.id", id);
     }
 
     public Uni<List<Video>> searchByTitle(String title) {

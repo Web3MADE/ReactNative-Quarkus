@@ -11,10 +11,6 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "users")
-// TODO: remove setters/getters
-// Use active record model: User object contains methods forf persisting state to the database
-// Note: the quarkus-panache-mock dep allows mocking the static methods of the User class for
-// testing
 public class User extends PanacheEntity {
     public String name;
     public String email;
