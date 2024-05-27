@@ -154,19 +154,39 @@ The `VideoController` handles all API requests regarding uploaded videos, includ
 
 There are four services used in this API. Each are explained below.
 
-### UserService
+### User Service
 
-This service is responsible
+// TODO: finish this documentation - then move onto frontend
+The `UserService` is responsible for the business logic for the Users
 
-### VideoService
+- Users are stored and fetched via the `UserRepository`.
 
-- brief summary
+### Video Service
 
-### BlobService
+The `VideoService` is responsible for the business logic for the videos.
 
-- more detailed
+- Videos are stored and fetched via the `VideoRepository`
+- Videos are uploaded via the `BlobService`, which the `VideoService` injects.
 
-### JwtTokenService
+### Blob Service
+
+The `BlobService` is responsible for uploading the video (mp4/video) and thumbnail (.jpeg/img) files to Azure blob storage.
+
+Here is an explanation of the file upload logic:
+
+1. The `uploadBlob(String containerName, String blobName, Path, filePath)` accepts the following parameters
+   - `containerName`: The name of your azure container that will store the blobs
+   - `blobName`: The name of the blob being uploaded (video or thumbnail)
+   - `filePath`: The file path of the blob being uploaded
+2. The `blobClient` is instantiated
+3. The `BinaryData` is extracted from the blob itself via the file path.
+   - The binary data is a data interchange type, handled by the Azure SDK so we don't have to manage it.
+4. The `BlobHttpHeaders` are set explicitly otherwise Azure blob storage will attempt to download instead of stream the video files
+5. Finally, we await a `Uni` to emit the completed upload via the `blobClient.uploadWithResponse()` method.
+
+**TODO**: Currently, files uplaoded via the React Native app are not being uploaded correctly and are empty. However, directly uploading via a REST client like Thunder Client/Postman does work.
+
+### Jwt Token Service
 
 - more detailed
 
