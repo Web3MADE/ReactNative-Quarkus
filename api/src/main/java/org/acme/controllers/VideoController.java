@@ -9,8 +9,6 @@ import org.acme.video.FileUploadInput;
 import org.acme.video.LikeRequest;
 import org.acme.video.Video;
 import org.acme.video.VideoDTO;
-import io.quarkus.hibernate.reactive.panache.common.WithSession;
-import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
 import jakarta.annotation.security.PermitAll;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -41,11 +39,6 @@ public class VideoController {
 
     @GET
     @PermitAll
-    /**
-     * @dev This WithSession indicates a session for reactive thread - had random issue earlier with
-     *      this so placing on all endpoints
-     */
-    @WithSession
     public Uni<List<VideoDTO>> getAllVideos() {
         return videoService.getAllVideos();
     }
@@ -53,7 +46,6 @@ public class VideoController {
     @GET
     @PermitAll
     @Path("/uploader/{id}")
-    @WithSession
     public Uni<List<VideoDTO>> getVideosByUploader(@PathParam("id") Long id) {
         return videoService.getVideosByUploader(id);
     }
@@ -61,7 +53,6 @@ public class VideoController {
     @GET
     @Path("{id}")
     @PermitAll
-    @WithSession
     public Uni<Response> getVideoById(@PathParam("id") Long id) {
         return videoService.getVideoById(id).onItem().ifNotNull()
                 .transform(video -> Response.ok(video).build()).onItem().ifNull()
@@ -88,7 +79,6 @@ public class VideoController {
 
     @POST
     @PermitAll
-    @WithTransaction
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     public Uni<Response> upload(FileUploadInput input) {
         return videoService.uploadVideo(input)
