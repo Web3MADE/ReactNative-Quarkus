@@ -6,7 +6,6 @@ The purpose of this project is to better understand how React Native & Quarkus o
 
 ## Table of Contents
 
-- [Getting Started](#getting-started)
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -15,9 +14,6 @@ The purpose of this project is to better understand how React Native & Quarkus o
 - [Authentication](#authentication)
 - [Error Handling](#error-handling)
 - [Testing](#testing)
-
-## Getting Started
-Instructions on how to get a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
 
@@ -32,7 +28,7 @@ List of software and tools that are required to set up the project.
 ### Installation
 
 1. Clone the repository at `https://github.com/Web3MADE/ReactNative-Quarkus.git` and `cd LearnReactNative`
-2. navigate to `/api` and run `quarkus dev` or `mvn quarkus:dev`to start the api
+2. navigate to `/api` and run `quarkus dev` or `mvn quarkus:dev` to start the api
 
 ## Usage
 
@@ -48,6 +44,7 @@ First step is to create a user. This will be saved to a postgres instance that i
 
 Then post the user from the REST API client of your choice, the example below uses curl.
 
+```
 curl -X POST http://localhost:8080/api/users \
 -H 'Content-Type: application/json' \
 -d '{
@@ -55,3 +52,12 @@ curl -X POST http://localhost:8080/api/users \
 "email": "john.doe@example.com",
 "password": "password123"
 }'
+```
+
+Your response should look contain a JWT token and the userId:
+
+```
+{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJodHRwczovL2V4YW1wbGUuY29tL2lzc3VlciIsInVwbiI6ImpvaG4uZG9lQGV4YW1wbGUuY29tIiwiZ3JvdXBzIjpbIlVzZXIiXSwiYmlydGhkYXRlIjoiMjAwMS0wNy0xMyIsImlhdCI6MTcxNjc5NDY4MiwiZXhwIjoxNzE2Nzk0OTgyLCJqdGkiOiJmZDJhZDMxNy1iYzZmLTQ0MTEtYWZlMy0wYTU3ZjE2MWY4MTYifQ.CzwgtYbCOjJ9YzlMkqu9OUXxO2Bg-3QbjjHhZtONZjWqcl34624hafPvHFtKTfk9q1LJ82X1fbFCrP91WMdO5lJ29PEY9WxJZG_2aXtoKyLG3AjlZnwOhnm6gTIpoxJL5ofdJhIrLqOd2P5fNNuyD4jLOoHIcvtwMF_ac95CzVNYM4JLYByBEXYn1HOq40dQqGIC1cmbQJEaJt7DrphrTRB3n2GrTeLV1KpAwS50L_kCCeafD8IfZzSkE6pLrICHpJMFt8OmrIRrM03VVwaRXKiRflL5oS-ETr9n_N74HPXxyj37aDY2ZZ0JKd1aq38YyPRTMIGknwpC69uPEakcmg","userId":1}
+```
+
+From here on, you may pass the JWT token to the authenticated endpoints, the one's annotated with `@RolesAllowed({ "User" })`
