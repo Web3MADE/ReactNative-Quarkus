@@ -188,7 +188,18 @@ Here is an explanation of the file upload logic:
 
 ### Jwt Token Service
 
-- more detailed
+The `JwtTokenService` is responsible for generating JWT tokens on behalf of the user, and assign them to the `User`
+role.
+
+Here is an explanation of the JWT token generation logic:
+
+1. The `generateJwtToken(String issuer, String upn, Role role, String birthdate)` accepts the following parameters
+   - `issuer`: The url of the JWT token issuer, for now this is mocked throughout the app via the `Constants.JWT_ISSUER_URL` constant
+   - `upn`: The User Principal Name, representing the unique identifier for the user
+   - `role`: The role of the user, which determines the level of authorization assigned to the user
+   - `birthdate`: A custom claim for the user's birthdate, a claim specific to this app.
+2. The "User" Role assigned via the `determineGroups(Role role)` method
+3. The isser, upn, birthdate claim and assigned groups are all set to the Jwt token and signed.
 
 ## Error Handling
 
