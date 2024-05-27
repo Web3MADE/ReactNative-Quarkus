@@ -48,7 +48,7 @@ public class UserService {
 
     public Uni<UserResponse> createUser(UserDTO userDTO) {
         if (userDTO.getId() != null) {
-            return null;
+            return Uni.createFrom().failure(new IllegalArgumentException("User already exists"));
         }
         Uni<User> createdUser = userRepo.createUser(userDTO);
 

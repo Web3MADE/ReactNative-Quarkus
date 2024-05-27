@@ -63,10 +63,13 @@ public class UserController {
     @PermitAll
     @WithTransaction
     public Uni<Response> createUser(UserDTO user) {
-        Uni<UserResponse> userResponse = userService.createUser(user);
-
-        return userResponse.onItem().transform(u -> {
-            return Response.ok(userResponse).status(Response.Status.CREATED).build();
+        return userService.createUser(user).onItem().transform(u -> {
+            System.out.println("User created: " + u.getToken() + " " + u.getUserId());
+            return Response.ok(u).status(Response.Status.CREATED).build();
+        }).onFailure().recoverWithItem(failure -> {
+            System.out.println("Failed to create user: " + failure.getMessage());
+            return Response.status(Response.Status.BAD_REQUEST).entity(failure.getMessage())
+                    .build();
         });
     }
 
