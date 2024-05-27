@@ -1,14 +1,14 @@
 package org.acme.controllers;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import org.acme.services.BlobService;
 import org.acme.services.UserService;
 import org.acme.services.VideoService;
 import org.acme.video.FileUploadInput;
 import org.acme.video.LikeRequest;
-import org.acme.video.Video;
 import org.acme.video.VideoDTO;
+import io.quarkus.hibernate.reactive.panache.common.WithSession;
+import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
 import jakarta.annotation.security.PermitAll;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -39,6 +39,7 @@ public class VideoController {
 
     @GET
     @PermitAll
+    @WithSession
     public Uni<List<VideoDTO>> getAllVideos() {
         return videoService.getAllVideos();
     }
@@ -46,6 +47,7 @@ public class VideoController {
     @GET
     @PermitAll
     @Path("/uploader/{id}")
+    @WithSession
     public Uni<List<VideoDTO>> getVideosByUploader(@PathParam("id") Long id) {
         return videoService.getVideosByUploader(id);
     }
@@ -53,6 +55,7 @@ public class VideoController {
     @GET
     @Path("{id}")
     @PermitAll
+    @WithSession
     public Uni<Response> getVideoById(@PathParam("id") Long id) {
         return videoService.getVideoById(id).onItem().ifNotNull()
                 .transform(video -> Response.ok(video).build()).onItem().ifNull()
@@ -62,6 +65,7 @@ public class VideoController {
     @GET
     @Path("/liked/{id}")
     @PermitAll
+    @WithSession
     public Uni<List<VideoDTO>> getLikedVideosByUser(@PathParam("id") Long id) {
         return userService.getUserById(id).onItem().ifNotNull().transformToUni(user -> {
             List<VideoDTO> likedVids = userService.getLikedVideosByUser(user);
@@ -72,14 +76,15 @@ public class VideoController {
     @GET
     @Path("/search")
     @PermitAll
+    @WithSession
     public Uni<List<VideoDTO>> searchVideos(@QueryParam("query") String query) {
-        return Video.findByTitle(query).map(videos -> videos.stream()
-                .map(video -> new VideoDTO((Video) video)).collect(Collectors.toList()));
+        return videoService.searchVideos(query);
     }
 
     @POST
     @PermitAll
     @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @WithTransaction
     public Uni<Response> upload(FileUploadInput input) {
         return videoService.uploadVideo(input)
                 .map(videoDTO -> Response.ok(videoDTO).status(Response.Status.CREATED).build())
@@ -93,6 +98,7 @@ public class VideoController {
     @PermitAll
     // @RolesAllowed({"User", "Admin"})
     @Consumes(MediaType.APPLICATION_JSON)
+    @WithTransaction
     public Uni<Response> likeVideo(@PathParam("videoId") Long videoId, LikeRequest request) {
         Long userId = request.userId;
         return videoService.likeVideo(videoId, userId)

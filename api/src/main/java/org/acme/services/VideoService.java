@@ -55,6 +55,12 @@ public class VideoService {
         return videoRepo.persistAndFlush(video);
     }
 
+    public Uni<List<VideoDTO>> searchVideos(String query) {
+        Uni<List<Video>> videosUni = videoRepo.searchByTitle(query);
+        return videosUni.map(videos -> videos.stream().map(this::mapVideoToVideoDTO)
+                .collect(Collectors.toList()));
+    }
+
     public Uni<VideoDTO> uploadVideo(FileUploadInput input) {
         Uni<User> userUni = userRepo.getUserById(input.uploaderId);
         Uni<String[]> urlsUni = uploadFiles(input);

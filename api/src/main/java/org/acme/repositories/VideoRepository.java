@@ -23,7 +23,7 @@ public class VideoRepository implements PanacheRepository<Video> {
     }
 
     public Uni<List<Video>> searchByTitle(String title) {
-        return Video.list("title", title);
+        return list("LOWER(title) LIKE LOWER(?1)", "%" + title + "%");
     }
 
     public Uni<Video> createVideo(String title, String url, String thumbnailUrl, User user) {
@@ -39,5 +39,6 @@ public class VideoRepository implements PanacheRepository<Video> {
     public Uni<Video> persistAndFlush(Video video) {
         return video.persistAndFlush().onItem().transform(v -> video);
     }
+
 
 }
