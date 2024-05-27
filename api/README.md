@@ -4,13 +4,15 @@ This is the API for the React Native app, which handles authenticated routes & f
 
 The purpose of this project is to better understand how React Native & Quarkus operate.
 
+**Note**: Currently, all endpoints are unauthenticated for development purposes. Just uncomment out the `@RolesAllowed` code to re-authenticate them.
+
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Usage](#usage)
 - [API Endpoints](#api-endpoints)
-- [Authentication](#authentication)
+- [Services](#services)
 - [Error Handling](#error-handling)
 - [Testing](#testing)
 
@@ -93,3 +95,84 @@ Your response should look like this:
 ```
 
 ## API Endpoints
+
+A list of available API endpoints are outlined below:
+
+### User Controller
+
+The `UserController` handles all API requests regarding User information, except for videos which is managed in the `VideoController`.
+
+- `createUser(UserDTO user)`
+  - Accepts a `UserDTO` object and Creates a new user.
+  - Returns a `UserResponse` object
+- `getAllUsers()`
+  - Returns all users as a list of `UserDTO`
+- `getById(@PathParam("id") Long id)`
+  - Accepts an `id` in the path parameter at `http://localhost:8080/api/users/{id}`
+  - Returns a `UserDTO` object
+- `login(UserDTO user)`
+  - Accepts a `UserDTO` object & fetches the user if valid.
+  - Returns a `UserResponse` object
+
+### Video Controller
+
+The `VideoController` handles all API requests regarding uploaded videos, including user-related videos.
+
+- `getAllVideos()`
+  - Returns a List of `VideoDTO` objects
+- `getVideosByUploader(@PathParam("id) Long id)`
+  - Accepts an `id` in the path parameter at `http://localhost:8080/api/videos/uploader/{id}`
+  - Returns a `Response` object containg a List of `VideoDTO` objects from the `uploadedVideos` from a aspecific user
+- `getVideoById(@PathParam("id") Long id)`
+  - Accepts an `id` in the path parameter at `http://localhost:8080/api/videos/{id}`
+  - Returns a `Response` object containg a specific `VideoDTO` object
+- `getLikedVideosByUser(@PathParam("id") Long id)`
+  - Accepts an `id` in the path parameter at `http://localhost:8080/api/videos/liked/{id}`
+  - Returns a List of `VideoDTO` objects containing the `likedVideos` from a specific user
+- `searchVideos(@QueryParam("query") String query)`
+  - Searches the PostgresDB instance by the query passed at `http://localhost:8080/api/videos/search?query={query}`
+  - Returns a List of `VideoDTO` objects
+- `upload(FileUploadInput input)`
+  - Accepts a `FileUploadInput` object, which is a custom type containing a videoUrl, thumbnailUrl, title and uploaderId
+  - Uploaded files are stored in a public Azure container
+  - Returns a `Repsonse` object containing the uploaded files (video + thumbnail).
+- `likeVideo(@PathParam("videoId") Long videoId, LikeRequest request)`
+  - Accepts a `videoId` and `request` (custom type for unknown reasons it wouldn't work otherwise) that likes a specific video from a specific user
+  - Returns a `Response` object containing the liked video.
+
+## Services
+
+### UserService
+
+- brief summary
+
+### VideoService
+
+- brief summary
+
+### BlobService
+
+- more detailed
+
+### JwtTokenService
+
+- more detailed
+
+## Error Handling
+
+This is a TODO for later, but it would follow the format:
+
+1. Create `exception` folder
+2. Define custom exception classes
+3. Implement exception mappers
+4. Implement custom exceptions into services
+
+## Testing
+
+### Service Tests
+
+- outline the features of quarkus testing in services
+
+### Controller Tests
+
+- outline the features of quarkus testing in controllers
