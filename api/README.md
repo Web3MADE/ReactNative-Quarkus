@@ -6,7 +6,7 @@ The purpose of this project is to better understand how React Native & Quarkus o
 
 **Note**: Currently, all endpoints are unauthenticated for development purposes. Just uncomment out the `@RolesAllowed` code to re-authenticate them.
 
-## Hibernate Reactive with Panache
+## Hibernate Reactive with Panache
 
 The API uses Hibernate Reactive with Panache, an extension of Hibernate ORM that works with reactive, non-blocking code.
 
@@ -14,7 +14,7 @@ So, why use non-blocking IO?
 
 Traditional Hibernate ORM operations are reliant on database operations to complete, thus becoming very inefficient/slow at high, simultaneous requests.
 
-A non-blocking IO allows for high-concurrency where many users can interact simultaneusly.
+A non-blocking IO allows for high-concurrency where many users can interact simultaneously and rapidly.
 
 ## Table of Contents
 
@@ -156,7 +156,6 @@ There are four services used in this API. Each are explained below.
 
 ### User Service
 
-// TODO: finish this documentation - then move onto frontend
 The `UserService` is responsible for the business logic for the Users
 
 - Users are stored and fetched via the `UserRepository`.
@@ -212,10 +211,25 @@ This is a TODO for later, but it would follow the format:
 
 ## Testing
 
+When testing with Hibernate Reactive Panache, the `@RunOnVertxContext` must be used to allow the tests to run on the Vert.x thread instead of the main thread.
+
+Furthermore, there are two types of asserters used:
+
+1. `UniAsserter`:
+   - Imported from `quarkus.test.vertx` package.
+   - Test methods that run on the Vert.x thread and return a Uni.
+2. `TransactionalUniAsserter`:
+   - Imported from `quarkus.test.hibernate.reactive.panache` package.
+   - Test methods that run on the Vert.x thread and handle database transactions
+
 ### Service Tests
 
-- outline the features of quarkus testing in services
+Unit tests for services have been made at `UserServiceTest` and `VideoServiceTest`.
+
+All dependencies are mocked via `quarkus.test.InjectMock`. The Service itself is injected normally via `jakarta.inject.Inject`.
+
+Notice how the assertions use the imported asserter. Although, the tests still work without it.
 
 ### Controller Tests
 
-- outline the features of quarkus testing in controllers
+A Unit test for the `UserControllerTest` have been made, mostly to see how it works in this reactive paradigm.
