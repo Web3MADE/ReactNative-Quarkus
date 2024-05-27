@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import org.acme.repositories.UserRepository;
 import org.acme.user.User;
 import org.acme.user.UserDTO;
+import org.acme.user.UserResponse;
+import org.acme.utils.Constants;
 import org.acme.video.VideoDTO;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -14,6 +16,9 @@ import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class UserService {
+
+    @Inject
+    JwtTokenService jwtTokenService;
 
     @Inject
     UserRepository userRepo;
@@ -41,11 +46,20 @@ public class UserService {
         return likedVideos;
     }
 
-    public Uni<User> createUser(UserDTO userDTO) {
+    public Uni<UserResponse> createUser(UserDTO userDTO) {
         if (userDTO.getId() != null) {
             return null;
         }
-        return userRepo.createUser(userDTO);
+        Uni<User> createdUser = userRepo.createUser(userDTO);
+
+        return createdUser.onItem().transform(user -> {
+            // Generate JWT Token
+            String token = jwtTokenService.generateJwtToken(Constants.JWT_ISSUER_URL,
+                    user.getEmail(), Constants.Role.USER, Constants.JWT_BIRTHDATE);
+            UserResponse userResponse = new UserResponse(token, user.id);
+            return userResponse;
+        });
+
     }
 
     public Uni<User> persistAndFlush(User user) {

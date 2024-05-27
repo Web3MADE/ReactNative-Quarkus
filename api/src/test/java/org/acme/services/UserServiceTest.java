@@ -5,6 +5,9 @@ import java.util.List;
 import org.acme.repositories.UserRepository;
 import org.acme.user.User;
 import org.acme.user.UserDTO;
+import org.acme.user.UserResponse;
+import org.acme.utils.Constants;
+import org.acme.utils.Constants.Role;
 import org.junit.jupiter.api.Test;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.hibernate.reactive.panache.TransactionalUniAsserter;
@@ -19,6 +22,9 @@ public class UserServiceTest {
 
     @Inject
     UserService userService;
+
+    @InjectMock
+    JwtTokenService jwtService;
 
     @InjectMock
     UserRepository userRepo;
@@ -101,14 +107,23 @@ public class UserServiceTest {
         createdUser.name = userDTO.getName();
         createdUser.email = userDTO.getEmail();
         createdUser.password = userDTO.getPassword();
+        UserResponse userResponse = new UserResponse("token", createdUser.id);
+        // mock generateJwtToken params
+        String mockIssuer = "mockIssuer";
+        Role mockRole = Constants.Role.USER;
+        String mockUpn = "mockUpn";
+        String mockBirthdate = "mockBirthdate";
+
         // act
         asserter.execute(() -> {
             when(userRepo.createUser(userDTO)).thenReturn(Uni.createFrom().item(createdUser));
+            when(jwtService.generateJwtToken(mockIssuer, mockUpn, mockRole, mockBirthdate));
             return Uni.createFrom().voidItem();
         });
 
         asserter.assertThat(() -> userService.createUser(userDTO), res -> {
-            res.equals(createdUser);
+            // why doesnt this expect a Uni<UserResponse>?
+            res.equals(userResponse);
         });
     }
 

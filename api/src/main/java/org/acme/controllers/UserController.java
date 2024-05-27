@@ -3,9 +3,9 @@ package org.acme.controllers;
 import java.util.List;
 import org.acme.services.JwtTokenService;
 import org.acme.services.UserService;
-import org.acme.user.User;
 import org.acme.user.UserDTO;
 import org.acme.user.UserResponse;
+import org.acme.utils.Constants;
 import io.quarkus.hibernate.reactive.panache.common.WithSession;
 import io.quarkus.hibernate.reactive.panache.common.WithTransaction;
 import io.smallrye.mutiny.Uni;
@@ -49,6 +49,7 @@ public class UserController {
     @WithSession
     public Uni<Response> get(@PathParam("id") Long id) {
         Uni<UserDTO> user = userService.getUserById(id);
+
         return user.onItem().transform(userDTO -> {
             if (userDTO == null) {
                 return Response.status(Response.Status.NOT_FOUND).build();
@@ -62,15 +63,9 @@ public class UserController {
     @PermitAll
     @WithTransaction
     public Uni<Response> createUser(UserDTO user) {
-        System.out.println(
-                "User: " + user.getName() + " " + user.getEmail() + " " + user.getPassword());
-        Uni<User> createdUser = userService.createUser(user);
+        Uni<UserResponse> userResponse = userService.createUser(user);
 
-        return createdUser.onItem().transform(u -> {
-            // Generate JWT Token
-            String token = jwtTokenService.generateJwtToken("https://example.com/issuer",
-                    user.getEmail(), "User", "2001-07-13");
-            UserResponse userResponse = new UserResponse(token, u.id);
+        return userResponse.onItem().transform(u -> {
             return Response.ok(userResponse).status(Response.Status.CREATED).build();
         });
     }
@@ -78,6 +73,7 @@ public class UserController {
     @POST
     @Path("/login")
     @WithSession
+    // TODO: clean up login code
     public Uni<Response> login(UserDTO user) {
         System.out.println("User: " + user.getEmail() + " " + user.getPassword());
         Uni<UserDTO> foundUser = userService.findByEmail(user.getEmail());
@@ -101,8 +97,8 @@ public class UserController {
             }
 
             // Generate JWT Token
-            String token = jwtTokenService.generateJwtToken("https://example.com/issuer",
-                    user.getEmail(), "User", "2001-07-13");
+            String token = jwtTokenService.generateJwtToken(Constants.JWT_ISSUER_URL,
+                    user.getEmail(), Constants.Role.USER, Constants.JWT_BIRTHDATE);
             UserResponse userResponse = new UserResponse(token, userDTO.getId());
             return Uni.createFrom().item(Response.ok(userResponse).build());
         });

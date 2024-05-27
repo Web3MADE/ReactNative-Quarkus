@@ -2,13 +2,14 @@ package org.acme.services;
 
 import java.util.HashSet;
 import java.util.Set;
+import org.acme.utils.Constants.Role;
 import org.eclipse.microprofile.jwt.Claims;
 import io.smallrye.jwt.build.Jwt;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class JwtTokenService {
-    public String generateJwtToken(String issuer, String upn, String role, String birthdate) {
+    public String generateJwtToken(String issuer, String upn, Role role, String birthdate) {
         Set<String> groups = determineGroups(role);
 
         String token = Jwt.issuer(issuer).upn(upn).groups(groups)
@@ -18,13 +19,13 @@ public class JwtTokenService {
 
     }
 
-    private Set<String> determineGroups(String role) {
+    private Set<String> determineGroups(Role role) {
         Set<String> groups = new HashSet<>();
         // Add basic "User" role to everyone, modify as needed
         groups.add("User");
 
         // Additional roles based on input
-        switch (role.toUpperCase()) {
+        switch (role.name()) {
             case "ADMIN":
                 groups.add("Admin");
                 break;
